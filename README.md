@@ -17,7 +17,7 @@ following steps:
 
 * [Reading data and quality control](#Reding_and_QC)
 * [RTAM1/RTAM2 Normalization](#RTAM1/RTAM2-Normalization)
-    * [Cleaning data](##Cleaning data)
+    * [Cleaning data](##Cleaning_data)
     * [Step1: Normalization to library size](##Step1:-Normalization-to-library-size)
     * [Step2: RTAM1/2 complementary step](##Step2:-RTAM1/2-completion-strategy)
     * [Justification of normalized data](##justification-of-normalized-data)
