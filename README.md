@@ -23,13 +23,13 @@ following steps:
     * [Justification of normalized data](##justification-of-normalized-data)
 * [Clustering to cell-types](#clustering-to-celltypes)
 * [iCNV Analysis from RNA-seq data](#infered-CNV-analysis)
-    * [generating infered-CNV curves for (test and/or control) cells ](#sciCNV-on-normalized-data)
+    * [generating infered-CNV curves for (test and/or control) cells ](##sciCNV-on-normalized-data)
     * [Scaling and Filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
     * [Sketching the average MMPCs iCNV-curve after correction](##Sketching_ave_iCNV)
-* [Malignancy CNV-score](##malignancy_score)
-* [Heatmap of CNV-curves and detecting rare subclones](##heatmap)
-    * [Generating heatmap](#generating_heatmap)
-    * [Detecting subclones](#deteccting_subclones)
+* [Malignancy CNV-score](#malignancy_score)
+* [Heatmap of CNV-curves and detecting rare subclones](#heatmap)
+    * [Generating heatmap](##generating_heatmap)
+    * [Detecting subclones](##deteccting_subclones)
 
 
 
