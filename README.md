@@ -1,31 +1,33 @@
-# sciCNV
+
 
 # A Short Explanation to sciCNV Pipeline
 ## Introduction
-An important challenge in copy number variation calling using single-cell RNA-seqs is 
-to provide a clean data which can reflect real biological interface and actual functionality 
-of genes across entire genome and in comparison to a negative control. This can be 
-even more challenging if we merge two datasets (e.g. test samples to control samples).
-Here, we introduce a new bioinformatics tool which is prepared to overcome this problem and to provide an accurate 
-inferred-copy-number-alteration analysis to study the evolutionary pathogenesis of diseases.
-Our analysis can be widely applied to any malignancy/abnormality and in any context of intra-tumoral/malignant/infectious 
-heterogeneous system.
+An important challenge in single-cell study using RNA-seqs and specifically calling 
+copy number variations is to provide an unbiased (normalized) dataset which is bale to 
+reflect real biological interface and actual functionality of genes across entire 
+genome against a negative control. This can be even more challenging if one wants to 
+merge two datasets (e.g. merging test sample and control sample).
 
-Single-cell-inferred Copy Number Variation (sciCNV) pipeline is a novel 
-strategy to likely answer all these challenges. Our pipe is consist of the 
-following steps:
+Here, we introduce a new bioinformatics tool developed to overcome these 
+problems and to provide an accurate inferred copy-number-alteration analysis to 
+study the evolutionary pathogenesis of a targeted disease/disorder. Our analysis 
+can be widely applied to any malignancy/abnormality and in any 
+context of intra-tumoral/malignant/infectious heterogeneous systems.
+
+Single-cell inferred Copy Number Variation (sciCNV) pipeline is a novel 
+strategy that we developed to likely answer all these challenges. Our pipeline 
+includes the following steps:
 
 * [Reading data and quality control](#Reding_and_QC)
 * [RTAM1/RTAM2 Normalization](#RTAM1/RTAM2-Normalization)
-    * [Cleaning data](##Cleaning_data)
-    * [RTAM1/2 normalization](##RTAM1/2)
+    * [RTAM1/2 normalziation](##RTAM1/2)
     * [Justification of normalized data](##justification-of-normalized-data)
 * [Clustering to cell-types](#clustering-to-celltypes)
 * [iCNV Analysis from RNA-seq data](#infered-CNV-analysis)
     * [generating infered-CNV curves for (test and/or control) cells ](##sciCNV-on-normalized-data)
     * [Scaling and Filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
     * [Sketching the average MMPCs iCNV-curve after correction](##Sketching_ave_iCNV)
-* [Malignancy CNV-score](#malignancy_score)
+* [Clone CNV-score](##malignancy_score)
 * [Heatmap of CNV-curves and detecting rare subclones](#heatmap)
     * [Generating heatmap](##generating_heatmap)
     * [Detecting subclones](##deteccting_subclones)
@@ -36,40 +38,63 @@ following steps:
 ***
 # Reading data and quality control
 
-```
-.rs.restartR()
-options(stringsAsFactors = FALSE)
+In this section, we firstly read raw-data in which transcription values per gene is given for 
+a set of single-cells. There exist at least two important provocations of removing 
+1) Damaged cells 
+2) Doublets (triplets, ...)
 
-library(grid)
-library(BiocGenerics)
-library(Rtsne)
-library(gplots)
-library(ComplexHeatmap)
-library(circlize)
-library(pheatmap)
-library(heatmap3)
-library(colorspace)
-library(GetoptLong)
-library(MASS)
-library(Matrix)
-library(mgcv)
-library(RColorBrewer)
-library(viridis)
-library(gplots)
+We answer to the first provocation by considering the appropriate level of 
+mitochondrial gene expressions in specific organs; to be accurate the percentage 
+of mitochondrial level. Answering to the second provocation is 
+not easy as we firstly need to separate the population of cells (samples) to diverse 
+phyno(geno)-types, as doublets (triplets,  ... ) of each type can be only 
+compared to those features (such as transcription level, number of expressed genes, 
+total number of UMI for each cell, ... )  that are specific to the same type.
+
+```
 library(devtools)
 library(Seurat)
-library(GMD)
-library(cluster)
+library(dplyr)
+library(Matrix)
+library(qlcMatrix)
+library(devtools)
+library(svd)
+library(ggplot2)
+library(ggridges)
+library(viridis)
+require(scales)
+library(RColorBrewer)
+library(Rtsne)
+library(reticulate)
 library(robustbase)
+library(umap)
 source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
 
+##
+##
+path.code <- "."
+source(file.path(path.code, "Mito_umi_gn.R"))
+source(file.path(path.code, "RTAM_normalization.R"))
+source(file.path(path.code, "sciCNV.R"))
+source(file.path(path.code, "Scaling_CNV.R"))
+source(file.path(path.code, "CNV_score.R"))
+source(file.path(path.code, "sciCNV.R"))
+source(file.path(path.code, "Sketch_AveCNV.R"))
+source(file.path(path.code, "CNV_htmp_glist.R"))
+source(file.path(path.code, "CNV_htmp_gloc.R"))
+source(file.path(path.code, "Opt_MeanSD_RTAM1.R"))
+source(file.path(path.code, "Opt_MeanSD_RTAM2.R"))
+source(file.path(path.code, "heatmap_break_glist.R"))
+source(file.path(path.code, "heatmap_break_gloc.R"))
 ```
 
 ## Reading raw data with a list of genes on the first column
 
-Starting with raw data in which gene symbols are as features and cell identities as column names, 
-we firstly try to exclude damaged cells when the mitochondrial gene expressions of those cells are relatively higher 
-than a specific threshold than can be different in different cell-types.
+Starting with raw data in which gene symbols are as features and cell identities are 
+as column-names, we firstly try to exclude damaged cells when the mitochondrial 
+gene expressions of those cells are relatively higher than a specific (organ-dependent) 
+threshold. This threshold can be changed based on the physiological situation of cells,
+ e.g. when the sample is fresh or frozen and can be different in different cell-types.
 
 ```
 raw.data1 <- read.csv(file.choose(), header=TRUE)  
@@ -84,108 +109,50 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 
 ### Reading UMI and mitochondrial gene expressions associated to the data
 
+Inserting number of UMIs (nUMIs) and transcription values of mitochondrial genes, we 
+calculate the percentage of mitochondrial levels and remove cells with a higher 
+expression of mitochondrial gene in comparison to a threshold.
 
 ```
-nUMI <-  read.csv(file.choose(), header=TRUE)
-nUMI <- as.matrix(nUMI[,-1])
+nUMI <- t(as.numeric(colSums(raw.data2)))
+colnames(nUMI) <- colnames(raw.data2)
 
 mito.genes <-  read.csv(file.choose(), header=TRUE)
 mito.genes <- as.matrix(mito.genes[,-1])
-percent.mito.G <- t(as.matrix(colSums(mito.genes)))/Col_Sum
+percent.mito.G <- t(as.matrix(colSums(mito.genes)))/ ( Col_Sum[1:No.test] + colSums(mito.genes))
 
 nGene1 <- matrix(0, ncol = ncol(raw.data2) , nrow = 1)
-nonzero <- function(x) sum(x != 0)
+nonzero <- function(x){ sum(x != 0) }
 
-nGene1 <- lapply( 1:ncol(raw.data2), nonzero(raw.data2[, i]) ) 
+nGene1 <- lapply( 1:ncol(raw.data2), function(i){ nonzero(raw.data2[, i])} ) 
+nGene1 <- t(as.numeric(nGene1))
 colnames(nGene1) <- colnames(raw.data2)
 ```
 
-***
-## Removing damaged cells accross entire population 
+![Fig1](Figures/fig1.png)
 
-### Reading the 10x matrix
+
+***
+Now we read the 10x Genomics object and try to remove damaged cells 
+across entire population.
 
 ```
-seurat.data <- Read10X("~/Desktop/Sample1/filtered_feature_bc_matrix/")
-
-dense.size <- object.size(as.matrix(seurat.data))
-dense.size
-sparse.size <- object.size(seurat.data)
-sparse.size
-dense.size/sparse.size
-seurat.obj <- CreateSeuratObject(seurat.data ,project = "sample1", min.cells = 0,
-                           min.genes = 0, is.expr = 0, normalization.method = NULL,
-                           scale.factor = 10000, do.scale = FALSE, do.center = FALSE,
-                           names.field = 1, names.delim = "_", meta.data = NULL)
+MMS <- CreateSeuratObject(counts = raw.data2, project = "Sample1")
 ```
 
 ### Defining threshold to remove damaged cells
 
+In case there is no tissue-specific threshold for the percentage of mitochondrial gene 
+expressions, we usually consider the distribution of such percentages and assign 3 MAD 
+as the threshold to exclude damaged cells.
+
 ```
-drop_mitoMads <- 3
-threshold <- max(0.05, mean(percent.mito.G) + (drop_mitoMads)*(mad(percent.mito.G)) ) 
-
-#--- Mitocchondrial percentage vs nUMI
-
-layout(matrix(c(2,1,0,3,5,4,0,6),2,4) ,c(4.5,1,4.5,1),c(1,5), respect = TRUE) 
-par(mar=c(3,3,0,0),mgp=2:0)
-plot(percent.mito.G ~ nUMI, col=alpha("black",0.2),  pch=16, cex=1.2,
-     xlab="nUMI", ylab="Mitochondrial expression (%)" , ylim=c(0,0.2)   # ylim=c(0,1)
-)
-with(seurat.obj, abline(h = threshold, lwd = 2, lty = 2, col = alpha("red", 0.8)))
-legend("topright", bty = "n", lty = 2, col = alpha("red", 0.8), pt.bg = alpha("red", 0.8),
-       legend=paste(drop_mitoMads, "MADs above mean :", threshold))
-
-par(mar=c(0,3,1,0))
-HST <- hist(nUMI,breaks=100,col="grey",main=NULL,xaxt="n")
-MTPLR <- HST$counts / HST$density
-Dnsty <- density(nUMI)
-Dnsty$y <- Dnsty$y * MTPLR[1]
-lines(Dnsty,col=alpha("blue",0.7))
-
-par(mar=c(3,0,0,1))
-Dnsty <-  density(as.matrix(percent.mito.G)) 
-HST <- hist(percent.mito.G ,breaks=100,plot=F)
-BAR <- barplot(HST$density,horiz=T,space=0,col="grey",main=NULL,xlab="Density")
-SLOPE <- (max(BAR) - min(BAR)) / (max(HST$mids) - min(HST$mids))
-lines(y=Dnsty$x * SLOPE + (min(BAR) - min(HST$mids) * SLOPE),
-      x=Dnsty$y,lwd=2,col=alpha("blue",0.7))
-
-
-#--- Selecting damged cells
-damaged_cells <- as.matrix(which(percent.mito.G > threshold) )
-
-par(mar=c(3,3,0,0),mgp=2:0)
-plot(nGene1 ~ nUMI, 
-     col=alpha("black",0.2),  
-     pch=16, cex=1.2, xlab="nUMI", ylab="nGene")
-points(nGene1[1, damaged_cells] ~ nUMI[1, damaged_cells] ,
-       pch=21,cex=1.2,col=alpha("red",0.5),bg=alpha("red",0.3))
-legend("topleft",bty="n",pch=21,col=alpha("red",0.8),pt.bg=alpha("red",0.8),
-       legend="Damaged cells")
-
-
-par(mar=c(0,3,1,0))
-HST <- hist(nUMI,breaks=100,col="grey",main=NULL,xaxt="n")
-MTPLR <- HST$counts / HST$density
-Dnsty <- density(nUMI)
-Dnsty$y <- Dnsty$y * MTPLR[1]
-lines(Dnsty,col=alpha("blue",0.7))
-
-
-par(mar=c(3,0,0,1))
-Dnsty <-  density(as.matrix(nGene1)) 
-HST <- hist(nGene1 ,breaks=100,plot=F)
-BAR <- barplot(HST$density,horiz=T,space=0,col="grey",main=NULL,xlab="Density")
-SLOPE <- (max(BAR) - min(BAR)) / (max(HST$mids) - min(HST$mids))
-lines(y=Dnsty$x * SLOPE + (min(BAR) - min(HST$mids) * SLOPE),
-      x=Dnsty$y,lwd=2,col=alpha("blue",0.7))
-
-
-title("Detecting damaged cells based on mitochonrial expression level",
-      outer = TRUE, line = -2,
-      cex = 2, col ="blue")
-
+damaged_cells <- Mito_umi_gn(mat = MMS, 
+                             percent.mito.G = percent.mito.G,
+                             nUMI = nUMI,
+                             nGene = nGene1,
+                             No.test = No.test,
+                             drop.mads = 3 )
 ```
 
 ***
@@ -193,25 +160,49 @@ title("Detecting damaged cells based on mitochonrial expression level",
 
 
 ```
+if( length(damaged_cells) > 0 ){
 Outliers <- damaged_cells
 raw.data <- raw.data2[, - Outliers]
+nUMI <- t(as.matrix(nUMI))[, - Outliers]
+} else{
+  raw.data <- raw.data2
+}
 rownames(raw.data) <- raw.data1[ , 1]
-dim(raw.data2)
+colnames(nUMI) <- colnames(raw.data)
+dim(raw.data)
+```
+
+##  Sorting based on nUMI per cell (from largest to smallest nUMI)
+```
+raw.data <- raw.data2[, c(colnames(sort(as.data.frame(nUMI)[1:No.test], decreasing=TRUE)),
+                        colnames(sort(as.data.frame(nUMI)[(No.test+1):ncol(raw.data)], decreasing=TRUE))),
+                        drop=FALSE]
+rownames(raw.data) <- rownames(raw.data2) 
 ```
 
 ***
 #RTAM1/RTAM2 Normalization
 
+In the current step, we apply our novel normalization methods: RTAM1 & RTAM2, 
+to normalize raw data to a balanced, rational and consistent dataset of transcription 
+values.
 
 ```
-norm.data <- RTAM_normalization(raw.data, method = "RTAM2", Min_nGn = 250, Optimizing = TRUE) 
+norm.data <- RTAM_normalization(mat = raw.data,            
+                                method = "RTAM2",      
+                                Min_nGn  = 250,       
+                                Optimizing = FALSE)
+rownames(norm.data) <- rownames(raw.data2) 
+colnames(norm.data) <- colnames(raw.data)
 ```
 
 ## Sketching non-zero expressions
 
+To observe the (non-zero) expression levels of normalized data, we sketch them all in 
+a unique figure.
 
 ```
-graphic.off()
+graphics.off()
 plot.new()
 par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
 par(xaxs="i", yaxs="i") 
@@ -219,70 +210,84 @@ par(bty="l")
 plot(matrix(1,ncol=1,nrow=nrow(as.matrix(norm.data[,1][norm.data[,1]>0]))), 
      log2(as.matrix(norm.data[,1][norm.data[,1]>0]) +1  ), pch=16, cex=0.3, 
      col="darkgray" ,
-     xlim=c(-100, ncol(norm.data)+100)
-     ,ylim=c(0,  4.2), xlab = "Cells (ranked by UMI)",
+     xlim=c(-ncol(norm.data)*.1, ncol(norm.data)*1.1),
+     ylim=c(0,  4.2), xlab = "Cells (ranked by UMI)",
      ylab = expression("Expressions ("*Log[2]*"(.+1 ))"), 
      cex.lab = 2, cex.axis = 2, cex.main=2)
-
-
 for(i in 2:ncol(norm.data)){
   par(new=TRUE)
   points(  matrix(i,ncol=1,nrow=nrow(as.matrix(norm.data[,i][norm.data[,i]>0]))), 
            log2(as.matrix(norm.data[,i][norm.data[,i]>0]) +1  ), pch=16, cex=0.3, 
            col="darkgray")
 }
-title( paste("Sample1, ",method, "-normalization, cutoff",Min_nGn," - nGene",Nt,sep=""), 
+title( paste("Sample1, RTAM2-normalization, cutoff ", 250," nGene ",250,sep=""), 
        col.main = "brown", cex.main = 2)
-       
 ```     
 
 ### Checking the balance of 95% commonly expressed genes
 
+There are several existing methods to check the accuracy of normalization 
+(removing/reducing batch effects). In here we consider two methods: 
+1) Considering the average expression of those genes that are expressed in majority 
+of cells (for instance common genes in 95% of cells) which are supposed to be almost equal across
+entire population after normalization.
+2) Using the average gene expression for a list of house-keeping genes (or a spike-in list of genes) 
+which is assumed to remain unchanged and about equal after normalization.
+
 ```
-W3 <- ncol(norm.data)
-XX1 <- seq(1,W3,1)
-Z3 <-   as.matrix(norm.data[which(rowSums(norm.data[,XX1] != 0) > 0.95*W3 ), ] )
+Sqnce <- seq(1,ncol(norm.data),1)
+Common.mat <-   as.matrix(norm.data[which(rowSums(norm.data[,Sqnce ] != 0) > 0.95*ncol(norm.data) ), ] )
 
 library(robustbase)
-COLMED <- log2(colMeans(as.matrix(Z3[Z3>0])) +1)
+COLMED <- log2(colMeans(as.matrix(Common.mat[Common.mat>0])) +1)
 COLMED <- t(as.matrix(COLMED) )
 
-for(j in 1:(W3)){
+for(j in 1:ncol(norm.data)){
   par( new=TRUE)
   points(matrix(j,ncol=1,nrow=1),
-  log2(mean(as.matrix(Z3[,j][Z3[,j]>0])) + 1 ) ,axis = FALSE , col="red" , pch=15, cex =0.5      
+  log2(mean(as.matrix(Common.mat[,j][Common.mat[,j]>0])) + 1 ) ,
+  axis = FALSE , col="red" , pch=15, cex =0.5      
   )
 } 
+
+legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
+       legend=paste("Mean of 95% commonly expressed genes")) 
 ```
 
-### Checking the balancce of average expression of housekeeping genes
+![Fig2](./Figures/Fig2_1.png)
+
+
+### Checking the balance of average expression of housekeeping genes
 
 ```
 Houskeeping_gene_list <- read.csv(file.choose(), header=TRUE)
-W3 <- ncol(norm.data)
-
-BB12  <- norm.data[which(rownames(norm.data)%in% t(as.matrix(Houskeeping_gene_list))), ]
-BB12 <- as.matrix(BB12)
-colnames(BB12) <- colnames(norm.data)
-dim(BB12)
-
-Mean_BB12 <- matrix(0, ncol= W3 , nrow= 1)
-for(k in 1: (W3)){
-Mean_BB12[1,k] <- as.numeric(mean(BB12[,k][BB12[,k]>0]) )
+HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
+HK_mat <- as.matrix(HK_mat)
+colnames(HK_mat) <- colnames(norm.data)
+Mean_BB12 <- matrix(0, ncol = ncol(norm.data) , nrow = 1)
+for(k in 1: (ncol(norm.data))){
+Mean_HK_mat[1,k] <- as.numeric(mean(HK_mat[,k][HK_mat[,k]>0]) )
 }
 par( new=TRUE)
-points(log2(Mean_BB12[1,] +1 ) ,axis = FALSE , col="blue" , pch=15, cex =0.5 )
-
-legend("bottomright",bty="n",pch=16,col=c("blue",NA), cex=1.5,
-       legend=paste("Mean of Houskeeping gene expressions"))
+points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
+legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of Houskeeping gene expressions"))
 ```
+
+#![Fig3](./Figures/Fig2_2.png)
+
 
 ***
 # Clustering to cell-types
 
+Now we cluster cells (samples) from the normalized dataset to possible cell-types applying 
+dimensionality reduction, principle Component Analysis (Canonical Correlation Analysis or ...), 
+tSNE/UMAP methods to detect and sketch diverse clusters.
 
 ***
 ##  Excluding non-expressed genes
+
+Since differential gene expressions define diverse clusters, at this stage 
+we remove those genes which do not represent any expressions across entire population.
 
 ```
 train1 <- as.matrix(norm.data)
@@ -296,103 +301,97 @@ dim(train)
 ***
 ##  clustering the normalized data
 
-```
-library(Seurat)
-library(dplyr)
-library(Matrix)
-library(devtools)
-library(svd)
-library(ggplot2)
-library(ggridges)
-library(viridis)
-require(scales)
-```
+And then clustering normalized data to diverse phyno(geno)-types:
+
 
 ## Finding matrix of single cells (MSC) as a seurat object for clustering
 
+We generate a Seurat object to run tSNE/UMAP clustering methods through this 
+package.
+
 ```
-MSC <- CreateSeuratObject( train ,project = "RTBM241", min.cells = 0,
-                           min.genes = 0, is.expr = 0, normalization.method = NULL,
-                           scale.factor = 10000, do.scale = FALSE, do.center = FALSE,
-                           names.field = 1, names.delim = "_", meta.data = NULL)
-## OR 
-MSC  <- CreateSeuratObject(counts = train, project = "sample1", normalization.method = NULL)
+MSC <- CreateSeuratObject(counts = train, project = "sample1")
+MSC <- FindVariableFeatures(object = MSC)
+all.genes <- rownames(MSC)
+MSC <- ScaleData(MSC, features = all.genes)
+MSC <- RunPCA(object = MSC, do.print = TRUE, 
+              pcs.print = 1:10, genes.print = 10)
+MSC <- FindNeighbors(object = MSC)
+MSC <- FindClusters(object = MSC)
 
-MSC<- FindVariableGenes(object = MSC, mean.function = ExpMean, dispersion.function = LogVMR, 
-                         x.low.cutoff = 0, x.high.cutoff = 20, y.cutoff = -5)
+## Running tSNE
+MSC <- RunTSNE(object = MSC, 
+               reduction.type = "pca",   #  "cca.aligned",
+               dims.use = 1:5, do.fast = TRUE)
+DimPlot(object = MSC,reduction = "tsne", pt.size = 3, 
+        label = TRUE, label.size = 4)
 
-length(x = MMS@var.genes)
-
-
-MSC <- ScaleData(object = MSC)
-
-
-MSC <- RunPCA(object = MSC, pc.genes = MSC@var.genes, 
-              do.print = TRUE, pcs.print = 1:10, genes.print = 10)
-MSC <- ProjectPCA(object = MSC, do.print = FALSE)
-
-MSC <- FindClusters(object = MSC, 
-                    reduction.type = "pca",
-                    dims.use = 1:10, 
-                    resolution = 0.6, print.output = 0, save.SNN = TRUE,
-                    force.recalc = TRUE)
-
-PrintFindClustersParams(object = MSC)
-
-MSC <- RunTSNE(object =  MSC , reduction.type = "pca"   #  "cca.aligned"
-               , dims.use = 1:10, do.fast = TRUE )
+## Running UMAP
+MSC <- RunUMAP(MSC, dims = 1:10)
+DimPlot(MSC, reduction = "umap", 
+             pt.size = 3, 
+             label = TRUE, 
+             label.size = 4)                        
 ```
+
+![Fig3](./Figures/Fig3.png)
 
 ***
 # iCNV Analysis of RNA-seq data
 
-Now we run sciCNV function on a dataset comprising of test and control cells to derive iCNV-curves per cell across 
+Now, we run sciCNV pipeline on a dataset comprising of test and control cells to derive iCNV-curves per cell across 
 entire genome. So we firstly read the normalized matrix of test and control cells which is called _norm.tst.ctrl_ matrix,
 
 ```
-norm.tst.ctrl1 <- read.csv( file.choose(), header = TRUE) 
-tst.labels <- sapply(strsplit(colnames(Mn)[1], split='_', fixed=TRUE), function(x) (x[1]))
-L_tst <- length(grep(tst.labels, colnames(Mn)))
-
-ctrl.index <- seq( L_tst + 1, ncol(norm.tst.ctrl), 1)   # No of controcl cells
-tst.index <- seq(1, L_tst , 1) # No of test cells
+ctrl.index <- seq( No.test + 1, ncol(norm.data), 1)   # No of controcl cells
+tst.index <- seq(1, No.test , 1)                      # No of test cells
 ```
 
 ## generating infered-CNV curves for (test and/or control) cells 
 
-Then we perform our scciCNV function to generate iCNV curves for both tests and control cells.
+Then we perform our sciCNV function to generate iCNV curves for both tests 
+and control cells.
 
 ```
-CNV.data <- sciCNV (norm.tst.ctrl, n.TestCells = L_tst,  sharpness = 50, baseline_adj = FALSE)
+CNV.data <- sciCNV(norm.mat = norm.data, 
+                   No.test = No.test, 
+                   sharpness  = 1, 
+                   baseline_adj  = FALSE,  
+                   baseline = 0)
 ```
+
+
+![Fig4](Figures/Fig4.png)
+
+
 
 ***
-## Scaling and Filtering noise of the iCNV curves 
+## Scaling and filtering noise of the iCNV curves 
 
-In here, we scaling iCNV-curves to adjust one copy number gain/losses to height +1/-1 or so if applicable.
+In here, we scaling iCNV-curves to adjust one copy number gain/losses to 
+height +1/-1 or so if applicable. Then we define M_NF as matrix of noise-free data 
+for test/control cells which is attached to the average expression of test cells 
+(samples).
 
-```
-CNV.data.scaled <- Scaling.CNV(CNV.data, n.TestCells = L_tst, scaling.factor = 1 )
-
-CNV.scaled.output <- Scaling.CNV(CNV.data, n.TestCells = L_tst, scaling.factor = 0.64)
-CNV.scaled <- CNV.scaled.output[1]
-Ave_MMPCs1 <- CNV.scaled.output[2]
-```
-
-### defining M_NF as Noise-Free Matrix of test cells (and control cells)
+**Note:** _We suggest to run this part of algorithm on cluster for larger datasets due 
+to the calculation cost required to generate iCNV-curves for each single individual_.
 
 ```
-M_NF <- matrix(0, ncol=ncol(CNV.scaled)+1, nrow=nrow(CNV.scaled))
-M_NF[, seq(1,ncol( CNV.scaled))] <- CNV.scaled
-M_NF[, ncol(M_NF)] <- Ave_MMPCs1
+CNV.data.scaled <- Scaling_CNV( CNV.data, 
+                                n.TestCells = No.test, 
+                                scaling.factor = 0.4
+                              )
+M_NF <- CNV.data.scaled
 ```
+![Fig5](Figures/Fig5.png)
 
 ### Noise Filteration after scaling
 
-Based on the average bulk iCNVs of test cells, one may want to remove redundant signals.
+Based on the average bulk iCNVs calculated for test cells, one may remove redundant 
+signals.
 
 ```
-noise.thr = 0.3   # Noise filteration threshold for filtering noise after sclainng
+noise.thr = 0.4   # Noise threshold
 for(w in 1:ncol(M_NF) ){
   for(j in 1:nrow(M_NF)){
     if( (M_NF[j,w] > -noise.thr) && (M_NF[j,w] < noise.thr)  ){
@@ -400,13 +399,14 @@ for(w in 1:ncol(M_NF) ){
     }
   }
 }
-MM_NF <- as.matrix(MM_NF)
+M_NF <- as.matrix(M_NF)
 ```
 
 ### Taking Square Root of iCNVs
 
-At this stage we take square root of all iCNV values to converge to 1 those values which are 
-closer values to 1 and make smaller values than 
+Now we take square root of all iCNV values (or their absolute value when they are negative) 
+which converts values around 1 (-1) to 1 (-1) and values less than 0.5 (greater than -0.5) 
+to 0. This way we converge one copy-gain/loss t0 1/-1 and weaker expressions to zero.
 
 ```
 for(w in 1:ncol(M_NF)){
@@ -418,112 +418,166 @@ for(w in 1:ncol(M_NF)){
     }
   }
 }
+
+rownames(M_NF) <- rownames(CNV.data.scaled)
+colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))], "AveTest")
 ```
 
-Then we assigning chromosome number to each gene sorted based on chromosme number, starts and ends 
-to sketch the average iCNV curve of test cells.
+Then we assign associated chromosome number to each gene sorted based on chromosome 
+number, start and end to sketch the average iCNV curve of test cells.
 
 ```
-Gen.Loc <- read.csv( "~/Desktop/10X_Project/NEW_10XGENOMICS ANALYSIS/10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
-Assoc.Chr <-  as.matrix(Gen.Loc[rownames(norm.data), 2])
+Gen.Loc <- read.csv( "~/10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
+Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% rownames(CNV.scaled))
+Assoc.Chr <-  as.matrix(Gen.Loc[Specific_genes, 2])
+Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
 ```
 
 ### Finalizing the iCNV-matrix by attaching gene-name and chromosome number lists
 
-```
-M_NF1 <- cbind(Gen.Loc[rownames(norm.data), c(1,2)], M_NF)
-colnames(MM_NF1) <- c("Genes", "Chromosomes", colnames(norm.tst.ctrl), "Ave MMPCs")
-```
-
-## Sketching the average MMPCs iCNV-curve after correction
+As one may need to attach gene-names and the list of chromosome numbers to the M_NF matrix, 
+we finalize the iCNV matrix by adding these two columns of information.
 
 ```
-M_NF <- as.matrix(M_NF1)
-M_NF2 <- t(as.matrix(M_NF[ , ncol(M_NF)] ))
-rownames(MM_NF2) <- as.matrix(M_NF[ , 1] )
-
-pdf( paste("AveiCNVcurve_testVScontrol_scaling factor",scaling.factor,"_Noise threshold:",noise.thr,".pdf", sep=""),
-     width = 6, height = 4, paper = 'special')
-
-Sketch.AveCNV( Ave.mat = M_NF2, Assoc.Chr )
-dev.off()
+M_NF1 <- cbind(as.matrix(Gen.Loc[Specific_genes, 1]), 
+               as.matrix(Gen.Loc[Specific_genes, 2]), 
+               M_NF)
+colnames(M_NF1) <- c("Genes", "Chromosomes", colnames(norm.data), "Ave test")
 ```
+
+## Sketching the average test iCNV-curves after correction
+
+To see how average of test cells looks like after all above steps of making iCNV curves 
+for each single cells, we represent the iCNV curve of bulk test cells:
+
+```
+M_NF2 <- as.matrix(M_NF1)
+M_NF3 <- as.matrix(M_NF2[ , ncol(M_NF2)] )
+rownames(M_NF3) <- as.matrix(M_NF2[ , 1] )
+#pdf( paste("AveiCNVcurve_testVScontrol_scaling factor",scaling.factor,"_Noise threshold:",noise.thr,".pdf", sep=""),
+#     width = 6, height = 4, paper = 'special')
+
+Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
+```
+
+![Fig6](Figures/Fig6.png)
 
 ***
-# Malignancy CNV-score
+# Clone CNV-score
 
-Perfoming _CNV.score_  function we calculate malignancy CNV-score for test and control cells, which shows the likeness of 
-test and control cells to the average iCNV-curve of bulk test cells.
-
-```
-TotScore <- CNV.score( M_NF )
-```
-
-## sketching tumor scores for all cells showing segregation of test/control tumor scores
+Performing _CNV_score_  function, we calculate CNV-score for test and control 
+cells, which shows the likeness of test and control cells to the average iCNV-curve 
+of bulk test cells. Applying this method, we clone cells (samples) based on their 
+CNV-scores which in fact separates test and control individuals.
 
 ```
-TotScoreSort0 <- sort(TotScore[1,1:(ncol(TotScore)-205)])
-TotScoreSortNPC <- sort(TotScore[1,(ncol(TotScore)-204):ncol(TotScore)])
+TotScore <- CNV_score( M_nf = M_NF )
+```
 
-colors <- c( "green3","brown1")
+
+
+
+Sketching tumor scores for all cells showing segregation of test and control CNV-scores:
+
+```
+TotScoreSort0 <- sort(TotScore[1,1:No.test])
+TotScoreSortNPC <- sort(TotScore[1,(No.test+1):ncol(TotScore)])
+colors <- c( "royalblue1","brown1")
 Labels <- c("NPCs","CLS0")
-
-
+names <- as.matrix(c(rep(Labels[1], length(TotScoreSortNPC)), rep(Labels[2],length(TotScoreSort0) )) )
+value <- c(as.matrix(TotScoreSortNPC), as.matrix(TotScoreSort0))
+data=data.frame(names,value)
+data$factor <- factor(data$names, levels=Labels)
+##
+graphics.off()
 plot.new()
 par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
 par(bty="l")
-plot(1:205, TotScoreSortNPC ,col=alpha(colors[1],0.4) ,
-     xlab="Cells", ylab="Tumor Score", 
-     xlim=c(-5,ncol(TotScore)+10), 
-     ylim = c(min(TotScore),max(TotScore)+10),
-     pch = 16, 
-     cex.lab = 2, cex.axis = 2, cex.main=2, cex=2)
-par(new=TRUE)
-points(206:ncol(TotScore),TotScoreSort0,col=alpha(colors[2],0.4) ,axes=FALSE, pch = 16, cex=2  )
+boxplot(data$value ~ data$factor , col=alpha(colors,0.6),
+        ylim=c(min(TotScore)-1,max(TotScore)+1), 
+        cex.lab = 2, cex.axis = 2, cex.main=2,
+        xlab = "Type of individuals"
+        , ylab = "CNV-score",
+        bty='l', boxcol="gray" ,
+        outpch=16, outcex=1)
+title("CNV-score of individuals", col.main = "brown", cex.main = 2.5)
+##
+mylevels<-levels(data$factor)
+levelProportions<-summary(data$factor)/nrow(data)
 
-title('Tumor karyotype likness',col.main="brown", cex.main=2.5)
-
-legend(1000,-20,bty="n",pch=16,col=c(colors[1],NA),legend=paste(Labels[1]), 
-       cex=1.7)
-legend(1000,0,bty="n",pch=16,col=c(colors[2],NA),legend=paste(Labels[2]), 
-       cex=1.7)
+for(i in 1:length(mylevels)){
+  thislevel<-mylevels[i]
+  thisvalues<-data[data$factor==thislevel, "value"]
+  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/2)
+  points(myjitter, thisvalues, pch=20, cex=2, xaxt = "n",yaxt = "n",col=alpha(colors[i], 0.6) )  
+}
 ```
+
+![Fig7](Figures/Fig7.png)
 
 ***
 # Heatmap of CNV-curves and detecting rare subclones
 
-To see the final result of iCNV-analysis we sketch all CNV-curves together and try to 
+To see the final result of iCNV-analysis, we sketch all CNV-curves together and try to 
 segregate diverse subclones based on their CNV-similarities.
 
 ```
-CNV.mat <- t( M_NF)   #  /quantile(as.matrix(M1),0.99) )  #max(M1))
-L_ctrl <- nrow(CNV.mat) - L_tst
-
-tst.score <- sort(TotScore[1,1:(ncol(TotScore)-L_ctrl)] , decreasing=TRUE)     #MMPCs
-ctrl.score <- sort(TotScore[1, (ncol(TotScore)-L_ctrl+1):ncol(TotScore)] , decreasing=TRUE)  #NBCs
-ranked.score <- as.matrix( c(colnames(ctrl.score), colnames(tst.score)) )
-
-CNV.mat1 <- as.matrix(CNV.mat[ t(as.matrix(ranked.score)) , ])
-rownames(CNV.mat1) <-  ranked.score     
-colnames(CNV.mat1) <- rownames(M_NF)
-
-CNV.mat1_saved <- CNV.mat1
-ROWlist <- rownames(CNV.mat1)
-COLlist <- colnames(CNV.mat1) 
+CNV.mat <- t( M_NF[, -ncol(M_NF)])   
+rownames(CNV.mat) <- colnames(M_NF[, -ncol(M_NF)])
+colnames(CNV.mat) <- rownames(CNV.data)
 ```
 ## Generating heatmap
 
-Here is the function to generate heatmap using _heatmap3_ funcction against either 
-list of genes or genomic locations.
+Here, we introduce another function which generates heatmap using _heatmap3_ function 
+against either 
+1) list of genes (using _CNV_htmp_glist_ function) or 
+2) genomic locations (manipulating  _CNV_htmp_gloc_ function).
 
 ```
-CNV.heatmap(CNV.mat2,   sorting= TRUE,  TotScore,   L_tst,  heatmap.type =  "gnloc")
+## against list of genes
+break.glist <- rep(0, 24)
+break.glist <- heatmap_break_glist(CNV.mat2 = CNV.matrix )
+
+CNV_htmp_glist( CNV.mat2 = CNV.matrix,
+                Gen.Loc = Gen.Loc,
+                clustering = FALSE,        
+                sorting = TRUE,        
+                CNVscore = TotScore,
+                break.glist = break.glist,
+                No.test = No.test )
+```
+![Fig8](Figures/Fig8.png)
 ```
 
+## against actual hgenomic locations
+break.gloc <- rep(0, 24)
+break.gloc <- heatmap_break_gloc(M_origin = Gen.Loc )
+
+CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
+               Gen.Loc = Gen.Loc,
+               clustering = FALSE,
+               sorting = TRUE,        
+               CNVscore = TotScore,
+               break.gloc = break.gloc,
+               No.test = No.test )
+```
+
+![Fig9](Figures/Fig9.png)
 ## Detecting rare subclones
 
-CNV-similarities may separate cells in a different way in comparison to clustering based 
-on gene expressions. 
+CNV-similarities can separate cells in a different way than clustering them based 
+on gene expressions. One may use iCNV curves to cluster cells based on their copy number 
+alteration similarities as has been described in the paper and shown in the following figure. This can tend to a completely 
+different results than what is observed from clustering based on transcription levels. 
+For more details, please refer to our paper. 
+
+
+
+
+
+
+
+
 
 
 
