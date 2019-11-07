@@ -40,7 +40,8 @@ source(file.path(path.code, "CNV_htmp_glist.R"))
 source(file.path(path.code, "CNV_htmp_gloc.R"))
 source(file.path(path.code, "Opt_MeanSD_RTAM1.R"))
 source(file.path(path.code, "Opt_MeanSD_RTAM2.R"))
-source(file.path(path.code, "CNV_infer.R"))
+source(file.path(path.code, "heatmap_break_glist.R"))
+source(file.path(path.code, "heatmap_break_gloc.R"))
 
 ## Reading raw data with a list of genes on the first column
 
@@ -321,21 +322,35 @@ colnames(CNV.mat) <- rownames(CNV.data)
 ## In order to use genomic locations in our heatmap we read Gen.Loc matrix 
 ## with list of genes, chromosome numbers, starts and ends:
 
+###### generating heatmap
+## In order to use genomic locations in our heatmap we read Gen.Loc matrix 
+## with list of genes, chromosome numbers, starts and ends:
+
 ## Heatmap against list of genes
-CNV_htmp_glist( CNV.mat2 = CNV.mat,
+
+break.glist <- rep(0, 24)
+break.glist <- heatmap_break_glist(CNV.mat2 = CNV.matrix )
+
+CNV_htmp_glist( CNV.mat2 = CNV.matrix,
                 Gen.Loc = Gen.Loc,
                 clustering = FALSE,        
                 sorting = TRUE,        
-                CNVscore = TotScore,          
+                CNVscore = TotScore,
+                break.glist = break.glist,
                 No.test = No.test )
 
 ## Heatmap against genomic location
-CNV_htmp_gloc( CNV.mat2 = CNV.mat,
+break.gloc <- rep(0, 24)
+break.gloc <- heatmap_break_gloc(M_origin = Gen.Loc )
+
+CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                Gen.Loc = Gen.Loc,
                clustering = FALSE,
                sorting = TRUE,        
                CNVscore = TotScore,
+               break.gloc = break.gloc,
                No.test = No.test )
+
 
 
 
