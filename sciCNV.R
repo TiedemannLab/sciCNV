@@ -8,7 +8,6 @@
 ######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
-
 # norm.mat: Matrix of normalized single-cell gene expression (e.g. normalized scRNAseq). Formatted as follows: 
 #       1st column = gene name list. 
 #       1st Row = cell identifier.  Cells arranged with test cells in leftward columns followed by control cells (normal diploid cells) in rightward columns.
@@ -22,7 +21,6 @@
 #       Default = 0. Ideal setting: a fraction representing the net genomic change from diploidy (using a positive fraction for gain and a negative fraction for net genomic loss).
 #       If the CNV profile is unknown, run the CNV analysis with default zero setting, review the preliminary CNV profile, and consider re-running with baseline ccorrection.
 # baseline_adj: The baseline adjustment is only applied to test cells if it is TRUE. Default is FALSE. 
-
 
 sciCNV <- function(norm.mat, 
                    No.test, 
