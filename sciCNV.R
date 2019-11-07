@@ -1,4 +1,5 @@
 
+
 #######################################################################################
 ######                             sciCNV Method                                ####### 
 ######             ((  Merging MA and no-MA with baseline Correction  ))        #######
@@ -29,6 +30,8 @@ sciCNV <- function(norm.mat,
                    baseline_adj,   # TRUE or FALSE
                    baseline = 0        # defual is 0. Can be +tive or -tive from [-0.5, 0.5]
 ){
+  
+  source(file.path(path.code, "CNV_infer.R"))
   
   ## argument validation
   if (  is.na(No.test) ){
