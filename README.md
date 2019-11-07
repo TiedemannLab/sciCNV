@@ -18,8 +18,8 @@ Single-cell inferred Copy Number Variation (sciCNV) pipeline is a novel
 strategy that we developed to likely answer all these challenges. Our pipeline 
 includes the following steps:
 
-* [Reading data and quality control](# Reading data and quality control)
-   * [Reading raw data with a list of genes on the first column](## Reading raw data with a list of genes on the first column)
+* [Reading data and quality control](#Reading-data-and-quality-control)
+   * [Reading raw data with a list of genes on the first column](#Reading-raw-data)
 * [RTAM1/RTAM2 Normalization](#RTAM1/RTAM2-Normalization)
     * [RTAM1/2 normalziation](##RTAM1/2)
     * [Justification of normalized data](##justification-of-normalized-data)
