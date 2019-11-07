@@ -8,8 +8,6 @@
 ######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
-
-
 Mito_umi_gn <- function( mat = MMS, 
              percent.mito.G = percent.mito.G,
              nUMI = nUMI,
