@@ -2,7 +2,6 @@
 
 heatmap_break_gloc <- function( M_origin ){
 
-
 ## number of segments on the genome
 No_Intrvl <- 1000
 
