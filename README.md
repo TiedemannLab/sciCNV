@@ -254,7 +254,7 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
        legend=paste("Mean of 95% commonly expressed genes")) 
 ```
 
-![Fig2](./Figures/Fig2_1.png)
+![Fig2](Fig2_1.png)
 
 
 ### Checking the balance of average expression of housekeeping genes
@@ -273,7 +273,7 @@ points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
 legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of Houskeeping gene expressions"))
 ```
 
-#![Fig3](./Figures/Fig2_2.png)
+#![Fig3](Fig2_2.png)
 
 
 ***
@@ -334,7 +334,7 @@ DimPlot(MSC, reduction = "umap",
              label.size = 4)                        
 ```
 
-![Fig3](./Figures/Fig3.png)
+![Fig3](Fig3.png)
 
 ***
 # iCNV Analysis of RNA-seq data
@@ -361,7 +361,7 @@ CNV.data <- sciCNV(norm.mat = norm.data,
 ```
 
 
-![Fig4](Figures/Fig4.png)
+![Fig4](Fig4.png)
 
 
 
@@ -383,7 +383,7 @@ CNV.data.scaled <- Scaling_CNV( CNV.data,
                               )
 M_NF <- CNV.data.scaled
 ```
-![Fig5](Figures/Fig5.png)
+![Fig5](Fig5.png)
 
 ### Noise Filteration after scaling
 
@@ -460,7 +460,7 @@ rownames(M_NF3) <- as.matrix(M_NF2[ , 1] )
 Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
 ```
 
-![Fig6](Figures/Fig6.png)
+![Fig6](Fig6.png)
 
 ***
 # Clone CNV-score
@@ -513,7 +513,7 @@ for(i in 1:length(mylevels)){
 }
 ```
 
-![Fig7](Figures/Fig7.png)
+![Fig7](Fig7.png)
 
 ***
 # Heatmap of CNV-curves and detecting rare subclones
@@ -546,7 +546,7 @@ CNV_htmp_glist( CNV.mat2 = CNV.matrix,
                 break.glist = break.glist,
                 No.test = No.test )
 ```
-![Fig8](Figures/Fig8.png)
+![Fig8](Fig8.png)
 ```
 
 ## against actual hgenomic locations
@@ -562,7 +562,7 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                No.test = No.test )
 ```
 
-![Fig9](Figures/Fig9.png)
+![Fig9](Fig9.png)
 ## Detecting rare subclones
 
 CNV-similarities can separate cells in a different way than clustering them based 
