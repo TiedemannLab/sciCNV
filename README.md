@@ -551,7 +551,7 @@ CNV_htmp_glist( CNV.mat2 = CNV.matrix,
 
 ## against actual hgenomic locations
 break.gloc <- rep(0, 24)
-break.gloc <- heatmap_break_gloc(M_origin = Gen.Loc )
+break.gloc <- heatmap_break_gloc()
 
 CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                Gen.Loc = Gen.Loc,
