@@ -97,7 +97,7 @@ threshold. This threshold can be changed based on the physiological situation of
  e.g. when the sample is fresh or frozen and can be different in different cell-types.
 
 ```
-raw.data1 <- read.csv(file.choose(), header=TRUE)  
+raw.data1 <- read.table("./Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
 raw.data2 <- raw.data1[ , -1]
 rownames(raw.data2) <- raw.data1[ , 1]
 W <- ncol(raw.data2)
@@ -117,7 +117,7 @@ expression of mitochondrial gene in comparison to a threshold.
 nUMI <- t(as.numeric(colSums(raw.data2)))
 colnames(nUMI) <- colnames(raw.data2)
 
-mito.genes <-  read.csv(file.choose(), header=TRUE)
+mito.genes <-  read.table("Sample_100_CPCs___Mitochondrial.txt", sep = '\t',header = TRUE)
 mito.genes <- as.matrix(mito.genes[,-1])
 percent.mito.G <- t(as.matrix(colSums(mito.genes)))/ ( Col_Sum[1:No.test] + colSums(mito.genes))
 
@@ -260,7 +260,7 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
 ### Checking the balance of average expression of housekeeping genes
 
 ```
-Houskeeping_gene_list <- read.csv(file.choose(), header=TRUE)
+Houskeeping_gene_list <- read.table( "./HouseKeepingGenes.txt", sep = '\t',header = TRUE)
 HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
 colnames(HK_mat) <- colnames(norm.data)
@@ -427,7 +427,7 @@ Then we assign associated chromosome number to each gene sorted based on chromos
 number, start and end to sketch the average iCNV curve of test cells.
 
 ```
-Gen.Loc <- read.csv( "~/10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
+Gen.Loc <- read.table("./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = '\t', header=TRUE)
 Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% rownames(CNV.scaled))
 Assoc.Chr <-  as.matrix(Gen.Loc[Specific_genes, 2])
 Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
