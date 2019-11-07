@@ -569,7 +569,7 @@ CNV-similarities can separate cells in a different way than clustering them base
 on gene expressions. One may use iCNV curves to cluster cells based on their copy number 
 alteration similarities as has been described in the paper and shown in the following figure. This can tend to a completely 
 different results than what is observed from clustering based on transcription levels. 
-For more details, please refer to our paper. 
+For more details, please see our paper. 
 
 
 
