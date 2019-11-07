@@ -21,6 +21,7 @@
 # No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
 #       of test annd control cells in the heatmap
 
+
 CNV_htmp_gloc <- function(CNV.mat2,
                           Gen.Loc,
                           clustering = FALSE,        # TRUE or FALSE option 
