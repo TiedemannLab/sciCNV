@@ -12,6 +12,7 @@
 
 CNV_score <-  function( M_nf ){
   
+  
   # argument validation
   if ( is.matrix(M_nf) == FALSE ){
     stop( "Please insert a proper matrix of CNV-curves")
