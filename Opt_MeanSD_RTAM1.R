@@ -7,7 +7,6 @@
 ##     Princess Margaret Cancer centre     ##
 #############################################
 
-
 Opt_MeanSD_RTAM1 <- function(Normalized_log, Order_Matrix, nGene, Min_nGene, gene_cutoff){    
   
   
