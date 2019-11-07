@@ -129,7 +129,7 @@ nGene1 <- t(as.numeric(nGene1))
 colnames(nGene1) <- colnames(raw.data2)
 ```
 
-![Fig1](fig1.png)
+![Fig1](Fig1.png)
 
 
 ***
