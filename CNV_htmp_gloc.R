@@ -1,5 +1,4 @@
 
-
 #######################################################################################
 ######                             CNV.heatmap function                         ####### 
 ######               Heatmap of CNV-curves:against Genomic location (gloc)      #######
