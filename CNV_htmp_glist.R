@@ -17,17 +17,19 @@
 # CNVscore: is the total score matrix of all cells (possibly ranked separately for each cluster). Can be only used when sorting.clusters = TRUE.
 # cluster.lines: is a list of values which separate different clusters accross entire population, onlys used if there
 #        exist several clusters other than just test and control populations
+# break.glist: is a set of values each defines a vertical line that separates chromosomes
 # No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
 #       of test annd control cells in the heatmap
-# heatmap.type: Type of heatmap, either against list of genes ("gnlist") or genomic locations ("gnloc"). Default is "gnlist".
+
 
 CNV_htmp_glist <- function(CNV.mat2,
                            Gen.Loc,
                            clustering = FALSE,            # TRUE or FALSE option 
                            clustering.type = c("pearson", "kendall", "spearman"),   # "pearson", "kendalln", " spearman", defualt: "pearson"
-                           sorting = FALSE,              # TRUE or FALSE
-                           CNVscore = NA,                # Only exists when sorting = TRUE 
-                           cluster.lines = NA,      
+                           sorting = FALSE,               # TRUE or FALSE
+                           CNVscore = NULL,               # Only exists when sorting = TRUE 
+                           cluster.lines = NULL, 
+                           break.glist = break.glist,     # Needs to be defined as separation lines for chromosomes       
                            No.test ){
   
   ## argument validation
@@ -63,7 +65,9 @@ CNV_htmp_glist <- function(CNV.mat2,
   if ( Reduce("|", is.na(cluster.lines)) ){
     cluster.lines <- c(0, nrow(CNV.mat2) - No.test, nrow(CNV.mat2))
   }
-  
+  if ( Reduce("|", is.null(break.glist)) ){
+    break.glist <- c(0, ncol(CNV.mat2))
+  }
   ##### sorting cells within each cluster based on CNV-scores from the largest to the smallest (if applicable)
   
   if ( sorting == TRUE ){
@@ -159,45 +163,26 @@ CNV_htmp_glist <- function(CNV.mat2,
     
   }
   
+  CNV.mat3 <- as.matrix(CNV.mat3)
+  
   ## Assignning location of genes on the genome
-  Gen.Loc <- read.csv( "./10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
-  Gene.list <- which( as.matrix(Gen.Loc)[,1] %in% as.matrix(colnames(CNV.mat2)))
-  Assoc.Chr <- as.matrix( mapply( as.matrix(Gen.Loc[ Gene.list, 2])  , FUN = as.numeric) )
-  Break.lines.glist <- c() 
   
-  labels.glist <- t(as.matrix(c(paste("Chr", 1:22, sep = ""),"ChrX", "ChrY")))
-  Break.glist <- matrix(0, ncol = 24, nrow = 1)
-  for(i in 1: 22){ 
-    Break.glist[1,i] <- apply( Assoc.Chr == i, 2, which.max)
-  }
-  ##
-  if( length(which(  Gen.Loc[,2]  == "X")) == 0 ){
-    Break.glist[1,23] <- ncol(CNV.mat1)
-  } else {
-    Break.glist[1,23] <- max( which(rownames(Assoc.Chr) == "X"))
-  }
-  ##
-  if( length(which(  rownames(Assoc.Chr) == "Y")) == 0 ){
-    Break.glist[1,24] <- ncol(CNV.mat1)
-  } else {
-    Break.glist[1,24] <- max( which(rownames(Assoc.Chr) == "Y"))
-  }
-  
-  
-  labels.call.glist <- matrix(NA, ncol = ncol(CNV.mat), nrow = 1)
+  label.glist <- t(as.matrix(c(paste("Chr", 1:22, sep = ""),"ChrX", "ChrY")))
+  label.call.glist <- rep(NA, ncol(CNV.mat2))
   
   for(i in 1: 22){ 
-    if( Break.glist[1,i] <  ncol(CNV.mat1) - 10){
-      labels.call.glist[1,  Break.glist[1,i]+10 ] <- as.matrix(labels.glist[1, i])
+    if( break.glist[i] <  ncol(CNV.mat2) - 10){
+      label.call.glist[break.glist[i]+10 ] <- as.matrix(label.glist[i])
     } 
   }
   
-  if( Break.glist[1,23] <  ncol(CNV.mat1)  ){
-    labels.call.glist[1,  Break.glist[1,23] ] <- as.matrix(labels.glist[1, 23])
-    labels.call.glist[1,  Break.glist[1,24] ] <- as.matrix(labels.glist[1, 24])
+  if( break.glist[23] <  ncol(CNV.mat2)  ){
+    label.call.glist[break.glist[23] ] <- as.matrix(label.glist[23])
+    label.call.glist[break.glist[24] ] <- as.matrix(label.glist[24])
   } else {
-    labels.call.glist[1,  Break.glist[1,23] ] <- as.matrix(labels.glist[1, 23])
+    label.call.glist[break.glist[23] ] <- as.matrix(label.glist[23])
   }
+  
   
   rownames(CNV.mat3) <- ROWlist 
   final.mat <- CNV.mat3
@@ -224,7 +209,7 @@ CNV_htmp_glist <- function(CNV.mat2,
              sepcolor = "black",
              scale = "none",  
              labRow = NA,
-             labCol = labels.call.glist,
+             labCol = label.call.glist,
              cexCol = 1,
              srtCol = 90,
              #cutree_rows = 2, 
@@ -235,8 +220,8 @@ CNV_htmp_glist <- function(CNV.mat2,
              key.xlab = "Transcription level",
              denscol = "grey",
              density.info = "density",
-             rowsep = cluster.lines,
-             add.expr = abline(v= Break.glist) 
+             rowsep = cluster.lines ,
+             add.expr = abline(v = break.glist) 
   )
   
   
