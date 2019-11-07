@@ -373,8 +373,8 @@ height +1/-1 or so if applicable. Then we define M_NF as matrix of noise-free da
 for test/control cells which is attached to the average expression of test cells 
 (samples).
 
-**Note:** _We suggest to run this part of algorithm on cluster for larger datasets due 
-to the calculation cost required to generate iCNV-curves for each single individual_.
+**Note:** _We suggest you to run this part of the algorithm on cluster (i.e. simply run a .bash) for larger datasets due 
+to the calculation cost required to generate iCNV-curves for each of the single individuals (in here single-cells)_.
 
 ```
 CNV.data.scaled <- Scaling_CNV( CNV.data, 
