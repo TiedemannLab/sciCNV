@@ -23,6 +23,7 @@ CNV_infer  <- function( ss.expr ,
                         baseline 
 ){ 
   
+  
   ## argument value/validation
   if (is.na(baseline)){
     baseline <- 0    
