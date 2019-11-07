@@ -377,10 +377,7 @@ for test/control cells which is attached to the average expression of test cells
 to the calculation cost required to generate iCNV-curves for each of the single individuals (in here single-cells)_.
 
 ```
-CNV.data.scaled <- Scaling_CNV( CNV.data, 
-                                n.TestCells = No.test, 
-                                scaling.factor = 0.4
-                              )
+CNV.data.scaled <- Scaling_CNV( CNV.data, n.TestCells = No.test, scaling.factor = 0.4)
 M_NF <- CNV.data.scaled
 ```
 ![Fig5](Fig5.png)
