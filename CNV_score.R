@@ -1,5 +1,4 @@
 
-
 #######################################################################################
 ######                              CNV-Score function                          ####### 
 ######             ((  Assigning tumor/test likness score to single cells  ))   #######
