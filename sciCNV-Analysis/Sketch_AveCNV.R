@@ -1,7 +1,7 @@
 
 
 #######################################################################################
-######                             Sketch.AveCNV function                       ####### 
+######                             Sketch_AveCNV function                       ####### 
 ######         Sketching the average test CNV-curve agaisnt genomic location    #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                        copyright@AliMahdipourShirayeh                    #######
