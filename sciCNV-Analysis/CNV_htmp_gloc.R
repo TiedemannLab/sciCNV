@@ -1,7 +1,7 @@
 
 
 #######################################################################################
-######                             CNV.heatmap function                         ####### 
+######                           CNV_htmp_gloc function                         ####### 
 ######               Heatmap of CNV-curves:against Genomic location (gloc)      #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
