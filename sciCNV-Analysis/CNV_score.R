@@ -3,8 +3,8 @@
 #######################################################################################
 ######                              CNV-Score function                          ####### 
 ######             ((  Assigning tumor/test likness score to single cells  ))   #######
-######                     Tiedemann Lab, Princess Margaret Cancer centre       #######
-######                     copyright @AliMahdipourShirayeh                      #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
 # M_NF: is the matrix of icNV curves among with an extra column of average of 
