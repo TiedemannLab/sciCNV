@@ -1,7 +1,7 @@
 
 
 #######################################################################################
-######                             Scaling.CNV function                         ####### 
+######                             Scaling_CNV function                         ####### 
 ######                 To scale CNV-curves derived for ssRNA-seq data           #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                        copyright@AliMahdipourShirayeh                    #######
