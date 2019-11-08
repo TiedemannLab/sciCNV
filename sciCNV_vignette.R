@@ -258,7 +258,7 @@ colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))
 ## Assigning chromosome number to each gene sorted based on chromosme number, 
 ## starts and ends to sketch the average iCNV curve of test cells
 
-Gen.loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = ',', header=TRUE)
+Gen.loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
 Specific_genes <- which( Gen.loc[, 1] %in% rownames(CNV.data.scaled))
 Assoc.Chr <-  Gen.loc[Specific_genes, 2]
 #Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
