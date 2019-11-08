@@ -1,10 +1,11 @@
 
-##########################################################
-### RTAM Nomalization Function                       ####
-### copyright @AliMahdipourShirayeh                  ####
-### Tiedemann Lab, Princess Margaret Cancer Centre   ####
-##########################################################
 
+##################################################################################################
+######                           RTAM Nomalization Function                                ####### 
+###### ((New Methods: RTAM1 and RTAM2 to normalize expression data with high efficiency )) #######
+######     Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto          #######
+######                        copyright@AliMahdipourShirayeh                               #######
+##################################################################################################
 
 # Raw data matrix with  genes as rows and cells as columns
 # number with start and end of genimic locations
