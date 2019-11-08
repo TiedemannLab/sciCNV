@@ -1,4 +1,5 @@
 
+
 #######################################################################################
 ######                             sciCNV Method                                ####### 
 ######             ((  Merging MA and no-MA with baseline Correction  ))        #######
@@ -6,7 +7,6 @@
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
-
 
 # norm.mat: Matrix of normalized single-cell gene expression (e.g. normalized scRNAseq). Formatted as follows: 
 #       1st column = gene name list. 
