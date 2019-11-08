@@ -19,9 +19,6 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
                                Min_nGn,       # minimum number of genes per cell, below which cells are excluded. 
                                               # Defines the smallest least complex allowable cell. (default = 250 genes per cell)
                                Optimizing     # True or FALSE options to run optimization part of teh ccode or not
-                               #Nt            # Nt = the number of top-ranked (highly-rexpressed) genes used to normalize gene expression 
-                                              # intensities per cell. Ideally, less than or equal to Min_nGn.
-  
 ){
   
   # argument validations
