@@ -1,12 +1,13 @@
+
+
 #######################################################################################
 ######                             Sketch.AveCNV function                       ####### 
 ######         Sketching the average test CNV-curve agaisnt genomic location    #######
-######                       copyright@AliMahdipourShirayeh                     #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+######                        copyright@AliMahdipourShirayeh                    #######
 #######################################################################################
 
 Sketch_AveCNV <- function(Ave.mat){
-  
   
   Gen.loc <- read.table("./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
   Specific_genes <- which( as.matrix(Gen.loc)[, 1]   %in% rownames(as.matrix(Ave.mat)))
