@@ -46,7 +46,7 @@ source(file.path(path.code, "heatmap_break_gloc.R"))
 
 ## Reading raw data with a list of genes on the first column
 
-raw.data1 <- read.table("./Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
+raw.data1 <- read.table("./Dataset/Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
 raw.data2 <- as.matrix(raw.data1[ , -1])
 rownames(raw.data2) <- raw.data1[ , 1]
 colnames(raw.data2) <- colnames(raw.data1[ , -1])
@@ -64,7 +64,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 nUMI <- t(as.numeric(colSums(raw.data2)))
 colnames(nUMI) <- colnames(raw.data2)
 
-mito.genes <-  read.table("Sample_100_CPCs___Mitochondrial.txt", sep = '\t',header = TRUE)
+mito.genes <-  read.table("./Dataset/Sample_100_CPCs___Mitochondrial.txt", sep = '\t',header = TRUE)
 mito.genes <- as.matrix(mito.genes[,-1])
 percent.mito.G <- t(as.matrix(colSums(mito.genes)))/ ( Col_Sum[1:No.test] + colSums(mito.genes))
 
@@ -160,7 +160,7 @@ for(j in 1:ncol(norm.data)){
 legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5, legend=paste("Mean of 95% commonly expressed genes"))
 
 #---- Average expression of housekeeping genes
-Houskeeping_gene_list <- read.table( "./HouseKeepingGenes.txt", sep = '\t',header = TRUE)
+Houskeeping_gene_list <- read.table( "./Dataset/HouseKeepingGenes.txt", sep = '\t',header = TRUE)
 HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
 colnames(HK_mat) <- colnames(norm.data)
@@ -258,8 +258,8 @@ colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))
 ## Assigning chromosome number to each gene sorted based on chromosme number, 
 ## starts and ends to sketch the average iCNV curve of test cells
 
-Gen.loc <- read.table("./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
-Specific_genes <- which( Gen.loc[, 1]   %in% rownames(CNV.data.scaled))
+Gen.loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = ',', header=TRUE)
+Specific_genes <- which( Gen.loc[, 1] %in% rownames(CNV.data.scaled))
 Assoc.Chr <-  Gen.loc[Specific_genes, 2]
 #Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
 
