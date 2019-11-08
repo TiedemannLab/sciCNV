@@ -1,9 +1,10 @@
 
+
 #######################################################################################
 ######                             CNV.heatmap function                         ####### 
 ######                            Heatmap of CNV-curves                         #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
 # CNV.mat2: copy number variation matrix 
