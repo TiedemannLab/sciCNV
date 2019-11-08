@@ -5,8 +5,8 @@
 ######                             sciCNV Method                                ####### 
 ######             ((  Merging MA and no-MA with baseline Correction  ))        #######
 ######                 Infered Copy Numver Vatriation Producer                  #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, Univeristy of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
 
