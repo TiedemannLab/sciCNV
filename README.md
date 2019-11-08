@@ -183,7 +183,7 @@ rownames(raw.data) <- rownames(raw.data2)
 ```
 
 ***
-#RTAM1/RTAM2 Normalization
+# RTAM1/RTAM2 Normalization
 
 In the current step, we apply our novel normalization methods: RTAM1 & RTAM2, 
 to normalize raw data to a balanced, rational and consistent dataset of transcription 
