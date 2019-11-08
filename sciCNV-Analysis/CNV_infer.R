@@ -1,9 +1,10 @@
 
+
 #######################################################################################
 ######                             CNV_infer function                           ####### 
 ######                 Infered Copy Numver Vatriation for each single cell      #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
 # ss.expr: RNA-seq for each test/control cell
