@@ -9,6 +9,7 @@
 .rs.restartR()
 options(stringsAsFactors = FALSE)
 
+library(base)
 library(robustbase)
 library(devtools)
 library(Seurat)
@@ -45,14 +46,14 @@ source(file.path(path.code, "heatmap_break_gloc.R"))
 
 ## Reading raw data with a list of genes on the first column
 
-raw.data1 <- read.csv(file.choose(), header=TRUE)  
-raw.data2 <- raw.data1[ , -c(1,2,3,4)]
-raw.data2 <- raw.data1[ , -1]
+raw.data1 <- read.table("./Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
+raw.data2 <- as.matrix(raw.data1[ , -1])
 rownames(raw.data2) <- raw.data1[ , 1]
+colnames(raw.data2) <- colnames(raw.data1[ , -1])
 
 W <- ncol(raw.data2)
-No.test <- ncol(raw.data2)-100  # 205 #  # Number of test cells
-No.control <- 100 # 205    # Number of control cells
+No.test <- 100                     # Number of test cells
+No.control <- ncol(raw.data2)-100  # Number of control cells
 Col_Sum <- t(as.numeric(colSums(raw.data2)))
 
 ##################################################
@@ -63,7 +64,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 nUMI <- t(as.numeric(colSums(raw.data2)))
 colnames(nUMI) <- colnames(raw.data2)
 
-mito.genes <-  read.csv(file.choose(), header=TRUE)
+mito.genes <-  read.table("Sample_100_CPCs___Mitochondrial.txt", sep = '\t',header = TRUE)
 mito.genes <- as.matrix(mito.genes[,-1])
 percent.mito.G <- t(as.matrix(colSums(mito.genes)))/ ( Col_Sum[1:No.test] + colSums(mito.genes))
 
@@ -83,7 +84,7 @@ damaged_cells <- Mito_umi_gn(mat = MMS,
                              nUMI = nUMI,
                              nGene = nGene1,
                              No.test = No.test,
-                             drop.mads = 3)
+                             drop.mads = 1)
 
 #----------------------------
 ##  Excluding Damaged Cells
@@ -91,10 +92,13 @@ damaged_cells <- Mito_umi_gn(mat = MMS,
 if( length(damaged_cells) > 0 ){
   Outliers <- damaged_cells
   raw.data <- raw.data2[, - Outliers]
-  nUMI <- as.matrix(nUMI)[, - Outliers]
+  nUMI <- t(as.matrix(nUMI))[- Outliers]
 } else{
   raw.data <- raw.data2
 }
+
+nUMI <- t(as.matrix(nUMI))
+raw.data <- as.matrix(raw.data )
 rownames(raw.data) <- raw.data1[ , 1]
 colnames(nUMI) <- colnames(raw.data)
 
@@ -126,7 +130,7 @@ par(bty="l")
 plot(matrix(1,ncol=1,nrow=nrow(as.matrix(norm.data[,1][norm.data[,1]>0]))), 
      log2(as.matrix(norm.data[,1][norm.data[,1]>0]) +1  ), pch=16, cex=0.3, 
      col="darkgray" ,
-     xlim=c(-ncol(norm.data)*.1, ncol(norm.data)*1.1),
+     xlim=c(-ncol(norm.data)*.01, ncol(norm.data)*1.01),
      ylim=c(0,  4.2), xlab = "Cells (ranked by UMI)",
      ylab = expression("Expressions ("*Log[2]*"(.+1 ))"), 
      cex.lab = 2, cex.axis = 2, cex.main=2)
@@ -156,7 +160,7 @@ for(j in 1:ncol(norm.data)){
 legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5, legend=paste("Mean of 95% commonly expressed genes"))
 
 #---- Average expression of housekeeping genes
-Houskeeping_gene_list <- read.csv(file.choose(), header=TRUE)
+Houskeeping_gene_list <- read.table( "./HouseKeepingGenes.txt", sep = '\t',header = TRUE)
 HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
 colnames(HK_mat) <- colnames(norm.data)
@@ -199,10 +203,10 @@ DimPlot(MSC, reduction = "umap", pt.size = 3, label = TRUE, label.size = 4)
 ##  Running sciCNV function to derive CNV-curves per cell
 #---------------------------------------------------------
 tst.index  <- seq(1, No.test , 1)                      # No of test cells
-ctrl.index <- seq(No.test+1, ncol(norm.data), 1)   # No of controcl cells
+ctrl.index <- seq(No.test+1, ncol(norm.data), 1)      # No of controcl cells
 
 ## generating infered-CNV data for (test and/or control) cells 
-CNV.data <- sciCNV(norm.mat = as.matrix(norm.data), 
+CNV.data <- sciCNV(norm.mat = norm.data, 
                    No.test = No.test, 
                    sharpness  = 1, 
                    baseline_adj  = FALSE,  
@@ -221,7 +225,7 @@ CNV.data.scaled <- Scaling_CNV(V7Alt = CNV.data,
 ## the Scaling.CNV function again
 CNV.data.scaled <- Scaling_CNV(CNV.data, 
                                n.TestCells = No.test, 
-                               scaling.factor = 0.25)
+                               scaling.factor = 0.4)
 
 ## Defining M_NF as Noise-Free Matrix of test cells (and control cells)
 M_NF <- CNV.data.scaled
@@ -254,23 +258,23 @@ colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))
 ## Assigning chromosome number to each gene sorted based on chromosme number, 
 ## starts and ends to sketch the average iCNV curve of test cells
 
-Gen.Loc <- read.csv( "./10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
-Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% rownames(CNV.data.scaled))
-Assoc.Chr <-  as.matrix(Gen.Loc[Specific_genes, 2])
+Gen.loc <- read.table("./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
+Specific_genes <- which( Gen.loc[, 1]   %in% rownames(CNV.data.scaled))
+Assoc.Chr <-  Gen.loc[Specific_genes, 2]
 #Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
 
 #### Finalizing the iCNV-matrix by attaching gene-name and chromosome number lists
-M_NF1 <- cbind(as.matrix(Gen.Loc[Specific_genes, 1]), 
-               as.matrix(Gen.Loc[Specific_genes, 2]), 
+M_NF1 <- cbind(as.matrix(Gen.loc[Specific_genes, 1]), 
+               as.matrix(Gen.loc[Specific_genes, 2]), 
                M_NF)
 colnames(M_NF1) <- c("Genes", "Chromosomes", colnames(norm.data), "Ave test")
 M_NF2 <- as.matrix(M_NF1)
 M_NF3 <- as.matrix(M_NF2[ , ncol(M_NF2)] )
 rownames(M_NF3) <- as.matrix(M_NF2[ , 1] )
-pdf( paste("AveiCNVcurve_testVScontrol_scaling factor",scaling.factor,"_Noise threshold:",noise.thr,".pdf", sep=""),
-     width = 6, height = 4, paper = 'special')
+#pdf( paste("AveiCNVcurve_testVScontrol_scaling factor",scaling.factor,"_Noise threshold:",noise.thr,".pdf", sep=""),
+#     width = 6, height = 4, paper = 'special')
 
-Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
+Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)] )
 
 #---------------------------------------------------------
 #--------------------------------------------------------------
@@ -314,13 +318,9 @@ for(i in 1:length(mylevels)){
 #--------------------------------------------------------------
 ##  Heatmap of CNV-curves and detecting rare subclones
 #--------------------------------------------------------------
-CNV.mat <- t( M_NF[, -ncol(M_NF)])   
-rownames(CNV.mat) <- colnames(M_NF[, -ncol(M_NF)])
-colnames(CNV.mat) <- rownames(CNV.data)
-
-###### generating heatmap
-## In order to use genomic locations in our heatmap we read Gen.Loc matrix 
-## with list of genes, chromosome numbers, starts and ends:
+CNV.matrix <- t( M_NF[, -ncol(M_NF)])   
+rownames(CNV.matrix) <- colnames(M_NF[, -ncol(M_NF)])
+colnames(CNV.matrix) <- rownames(CNV.data)
 
 ###### generating heatmap
 ## In order to use genomic locations in our heatmap we read Gen.Loc matrix 
@@ -341,7 +341,7 @@ CNV_htmp_glist( CNV.mat2 = CNV.matrix,
 
 ## Heatmap against genomic location
 break.gloc <- rep(0, 24)
-break.gloc <- heatmap_break_gloc(M_origin = Gen.Loc )
+break.gloc <- heatmap_break_gloc()
 
 CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                Gen.Loc = Gen.Loc,
@@ -350,6 +350,12 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                CNVscore = TotScore,
                break.gloc = break.gloc,
                No.test = No.test )
+
+
+# CNV.mat2 = CNV.matrix; clustering = FALSE; sorting = TRUE; CNVscore = TotScore; cluster.lines = NULL
+
+
+
 
 
 
