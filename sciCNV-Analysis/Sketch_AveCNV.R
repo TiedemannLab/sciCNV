@@ -9,7 +9,7 @@
 
 Sketch_AveCNV <- function(Ave.mat){
   
-  Gen.loc <- read.table("./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
+  Gen.loc <- read.table("./sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
   Specific_genes <- which( as.matrix(Gen.loc)[, 1]   %in% rownames(as.matrix(Ave.mat)))
   Assoc.Chr <-  as.matrix(Gen.loc[Specific_genes, 2])
 
