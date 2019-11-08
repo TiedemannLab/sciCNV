@@ -2,7 +2,7 @@
 #######################################################################################
 ######                             Vignette of CNV pipeline                     ####### 
 ###### ((  RTAM1/2- normalization, sciCNV analysis, CNV-subclonal analysis  ))  #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
@@ -29,7 +29,7 @@ library(umap)
 source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
 
 ##
-path.code <- "."
+path.code <- "./sciCNV-Analysis/"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
 source(file.path(path.code, "sciCNV.R"))
