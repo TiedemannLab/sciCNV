@@ -19,19 +19,20 @@ strategy that we developed to likely answer all these challenges. Our pipeline
 includes the following steps:
 
 * [Reading data and quality control](#Reading-data-and-quality-control)
-   * [Reading raw data with a list of genes on the first column](#Reading-raw-data)
+   * [Reading raw data with a list of genes on the first column](#Reading-raw-data-with-a-list-of-genes-on-the-first-column)
+   * [Quality Control (QC): Eliminating damahged cells](#Quality-Control-(QC):-Eliminating-damahged-cells )
 * [RTAM1/RTAM2 Normalization](#RTAM1/RTAM2-Normalization)
-    * [RTAM1/2 normalziation](##RTAM1/2)
-    * [Justification of normalized data](##justification-of-normalized-data)
+    * [RTAM1/2 normalziation](#RTAM1/2)
+    * [Justification of normalized data](#justification-of-normalized-data)
 * [Clustering to cell-types](#clustering-to-celltypes)
 * [iCNV Analysis from RNA-seq data](#infered-CNV-analysis)
     * [generating infered-CNV curves for (test and/or control) cells ](##sciCNV-on-normalized-data)
     * [Scaling and Filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
     * [Sketching the average MMPCs iCNV-curve after correction](##Sketching_ave_iCNV)
-* [Clone CNV-score](##malignancy_score)
-* [Heatmap of CNV-curves and detecting rare subclones](#heatmap)
-    * [Generating heatmap](##generating_heatmap)
-    * [Detecting subclones](##deteccting_subclones)
+* [Clone CNV-score](#Clone-CNV-score)
+* [Heatmap of CNV-curves and detecting rare subclones](#Heatmap-of-CNV-curves-and-detecting-rare-subclones)
+    * [Generating heatmap](#generating_heatmap)
+    * [Detecting subclones](#deteccting_subclones)
 
 
 
