@@ -1,4 +1,12 @@
 
+
+#################################################################################################
+######                             heatmap_break_glist function                           ####### 
+###### Finding separating lines among diverse chromosomes to be used in sketching heatmap #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto            #######
+######                            copyright@AliMahdipourShirayeh                          #######
+#################################################################################################
+
 heatmap_break_glist <- function(CNV.mat2){
   
   gen.loc <- read.table( "./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
