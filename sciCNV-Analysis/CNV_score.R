@@ -1,7 +1,7 @@
 
 
 #######################################################################################
-######                              CNV-Score function                          ####### 
+######                              CNV_score function                          ####### 
 ######             ((  Assigning tumor/test likness score to single cells  ))   #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
