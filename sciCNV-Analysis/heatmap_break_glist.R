@@ -9,7 +9,7 @@
 
 heatmap_break_glist <- function(CNV.mat2){
   
-  gen.loc <- read.table( "./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
+  gen.loc <- read.table( "./sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
   gene.list <- which( as.matrix(gen.loc)[,1] %in% as.matrix(colnames(CNV.mat2)))
   assoc.chr <-  as.matrix(gen.loc[ gene.list, 2]) # as.matrix(mapply( as.matrix(gen.loc[ gene.list, 2]), FUN = as.numeric) )
   
