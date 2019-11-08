@@ -3,8 +3,8 @@
 #######################################################################################
 ######                             CNV.heatmap function                         ####### 
 ######               Heatmap of CNV-curves:against Genomic location (gloc)      #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
+######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
 # CNV.mat2: copy number variation matrix 
@@ -20,7 +20,6 @@
 # break.gloc: is a set of values each defines a vertical line that separates chromosomes
 # No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
 #       of test annd control cells in the heatmap
-
 
 CNV_htmp_gloc <- function(CNV.mat2,
                           Gen.Loc,
@@ -110,7 +109,7 @@ CNV_htmp_gloc <- function(CNV.mat2,
   COLlist <- colnames(CNV.mat1) 
   
   ## The original list of chromosomes associated with genes in iCNV-matrix
-  Gen.Loc <- read.csv( "./10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
+  Gen.Loc <- read.table( "./10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep='\t', header=TRUE)
   Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% colnames(CNV.mat2))
   M_sample <-  as.matrix(Gen.Loc[Specific_genes, ])
   
@@ -148,7 +147,7 @@ CNV_htmp_gloc <- function(CNV.mat2,
   ##################################################
   
   # Uploading the largest list of genes with chr number, start and end
-  MM <- read.csv( "./10XGenomics_gen_pos_GRCh38-1.2.0.csv", header=TRUE)
+  MM <- Gen.Loc
   MM1 <- data.frame(MM[,-1]); rownames(MM1) <- MM[,1]
   
   ############ Finding the length of each Chromosome
@@ -166,7 +165,7 @@ CNV_htmp_gloc <- function(CNV.mat2,
     minn[1,i] <- as.numeric(min(M_origin[which(as.matrix(M_origin[, 2]) == i) , 3]) )
     maxx[1,i] <- as.numeric(max(M_origin[which(as.matrix(M_origin[, 2]) == i) , 3]) )
   }
-  minn[1,23] <- as.numeric(min(M_origin[which(as.matrix(M_origin[, 2]) == "X") , 3]) )
+  minn[1,23] <- as.numeric(min(M_origin[which(M_origin[, 2] == "X") , 3]) )
   maxx[1,23] <- as.numeric(max(M_origin[which(as.matrix(M_origin[, 2]) == "X") , 3]) )
   
   minn[1,24] <- as.numeric(min(M_origin[which(as.matrix(M_origin[, 2]) == "Y") , 3]) )
@@ -385,17 +384,6 @@ CNV_htmp_gloc <- function(CNV.mat2,
   
   
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

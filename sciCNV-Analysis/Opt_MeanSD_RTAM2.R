@@ -1,4 +1,3 @@
-
 #############################################
 ##    Optimizing Function in RTAM2-linear  ##
 ##    To detect the optimal number         ##

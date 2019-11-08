@@ -12,7 +12,6 @@
 
 CNV_score <-  function( M_nf ){
   
-  
   # argument validation
   if ( is.matrix(M_nf) == FALSE ){
     stop( "Please insert a proper matrix of CNV-curves")
@@ -59,7 +58,6 @@ CNV_score <-  function( M_nf ){
   TotScore[1, ] <- 100*colSums(Score[, 1:(ncol(M_nf.scaled)-1)])/sum(Score[,ncol(M_nf.scaled)])
   colnames(TotScore) <- colnames( M_nf[, -ncol(M_nf)]) 
   
-  plot(TotScore[1, ],col="blue")
   return( TotScore )
   
 }

@@ -3,8 +3,8 @@
 #######################################################################################
 ######                             CNV.heatmap function                         ####### 
 ######                   Heatmap of CNV-curves: against gene list (gnlist)      #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
+######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
 # CNV.mat2: copy number variation matrix 
@@ -21,6 +21,7 @@
 # No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
 #       of test annd control cells in the heatmap
 
+
 CNV_htmp_glist <- function(CNV.mat2,
                            Gen.Loc,
                            clustering = FALSE,            # TRUE or FALSE option 
@@ -30,6 +31,7 @@ CNV_htmp_glist <- function(CNV.mat2,
                            cluster.lines = NULL, 
                            break.glist = break.glist,     # Needs to be defined as separation lines for chromosomes       
                            No.test ){
+  
   
   ## argument validation
   if ( missing(sorting) ){
@@ -57,23 +59,24 @@ CNV_htmp_glist <- function(CNV.mat2,
     }
   }
   
-  if  ( (is.null(No.test)) & Reduce("|", is.na(cluster.lines)) ){
+  if  ( (is.null(No.test)) & Reduce("|", is.null(cluster.lines)) ){
     stop("Please insert the number of test cells (No.test).")
   }
   
-  if ( Reduce("|", is.na(cluster.lines)) ){
+  if ( Reduce("|", is.null(cluster.lines)) ){
     cluster.lines <- c(0, nrow(CNV.mat2) - No.test, nrow(CNV.mat2))
   }
   if ( Reduce("|", is.null(break.glist)) ){
     break.glist <- c(0, ncol(CNV.mat2))
   }
+  
   ##### sorting cells within each cluster based on CNV-scores from the largest to the smallest (if applicable)
   
   if ( sorting == TRUE ){
     tst.score <- sort(CNVscore[1, 1:No.test] , decreasing=TRUE)     #MMPCs
     ctrl.score <- sort(CNVscore[1, (No.test+1):ncol(CNVscore)] , decreasing=TRUE)  #NBCs
     ranked.col <- as.matrix( c(colnames(t(as.matrix(ctrl.score))), colnames(t(as.matrix(tst.score))  )) )
-    CNV.mat1 <- as.matrix( CNV.mat2[ranked.col, ])
+    CNV.mat1 <- as.matrix( CNV.mat2[match(ranked.col, rownames(CNV.mat2)), ])
     rownames(CNV.mat1) <-  ranked.col     
     colnames(CNV.mat1) <- rownames(M_NF)
     
@@ -97,8 +100,9 @@ CNV_htmp_glist <- function(CNV.mat2,
     colnames(CNV.mat1) <- colnames(CNV.mat2) 
     
   } else if ( (clustering == "FALSE" ) & ( sorting == "FALSE")){
-    CNV.mat1 <- rbind(as.matrix(CNV.mat2[(No.test):nrow(CNV.mat2), ]) , as.matrix(CNV.mat2[1:No.test, ]) )
-    
+    CNV.mat1 <- rbind(as.matrix(CNV.mat2[(No.test+1):nrow(CNV.mat2), ]) , as.matrix(CNV.mat2[1:No.test, ]) )
+    rownames(CNV.mat1) <-  c(rownames(as.matrix(CNV.mat2[(No.test+1):nrow(CNV.mat2), ])), rownames(as.matrix(CNV.mat2[1:No.test, ]))  )   
+    colnames(CNV.mat1) <- colnames(CNV.mat2)
   }
   
   

@@ -1,5 +1,4 @@
 
-
 #######################################################################################
 ######                             Mito.umi.gn function                         ####### 
 ######           To sketch mitochondrial, nUMI and nGene versus each other      #######
@@ -7,6 +6,8 @@
 ######                       copyright@AliMahdipourShirayeh                     #######
 ######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
+
+
 
 Mito_umi_gn <- function( mat = MMS, 
              percent.mito.G = percent.mito.G,
