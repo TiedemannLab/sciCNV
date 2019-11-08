@@ -1,10 +1,11 @@
 
 
+
 #######################################################################################
 ######                             CNV_infer function                           ####### 
 ######                 Infered Copy Numver Vatriation for each single cell      #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
 
 # ss.expr: RNA-seq for each test/control cell
@@ -20,9 +21,8 @@ CNV_infer  <- function( ss.expr ,
                         mean.cntrl,  
                         sharpness, 
                         baseline_adj,
-                        baseline 
-){ 
-  
+                        baseline,
+                        new.genes ){ 
   
   ## argument value/validation
   if (is.na(baseline)){
@@ -45,6 +45,65 @@ CNV_infer  <- function( ss.expr ,
   } else {
     BLC <- 0
   }
+  
+  ## Assigning chromosome number to each gene sorted based on chromosme number, starts and ends 
+  gen.Loc <- read.table( "./10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
+  chr.n <- as.matrix( gen.Loc[which(as.matrix(gen.Loc[,1]) %in% new.genes), 2])
+
+  
+  ## defining parameters
+  resolution <- nrow(ss.expr)/(50*sharpness)
+  P12 <- floor(resolution)        
+  P31 <- P12/2;      E22 <- 1
+  E23 <- 1;          O51 <- 0.985
+  O52 <- 1 - O51;    P31 <- P12/2
+  E22 <- 1;          E23 <- 1
+  O25 <- 0.78;       O26 <- 0.2
+  C297 <- resolution/10  # = 4  #8
+  C298 <- 2;         J311 <- 1
+  m <- 1.0001
+  t <-  0.0002
+  Lambda <- 0.00001
+  
+  
+  ## Generating relative expression vs. negative control
+  FF <- rep(0, nrow(ss.expr))
+  AW <- rep(0, nrow(ss.expr))
+  BD <- rep(0, nrow(ss.expr))
+  G <- as.matrix(seq(1,nrow(ss.expr),1))
+  #rownames(chr.n) <- G
+  
+  FF[1] <- 1
+  for(i in 2:nrow(ss.expr)){
+    if( chr.n[i] == chr.n[i-1]){ 
+      FF[i] <-  FF[i-1] + 1
+    } else 
+      FF[i] <-  1
+  }
+  
+  AW[1] <- P12
+  for(i in 2:nrow(ss.expr)){
+    if( chr.n[i] == chr.n[i-1]){ 
+      if( AW[i-1] >0 ){ 
+        AW[i] <-  AW[i-1] -1 
+      } else 
+        AW[i] <-  0
+    } else 
+      AW[i] <-  P12
+  } 
+  
+  
+  BD[1] <- P12
+  for(i in seq(nrow(ss.expr)-1,1,-1) ){
+    if( chr.n[i] == chr.n[i+1]){ 
+      if( BD[i+1] > 0 ){ 
+        BD[i] <-  BD[i+1] -1 
+      } else 
+        BD[i] <-  0
+    } else 
+      BD[i] <-  P12
+  }
+  
   
   #---------------  T: mov av Control, before weighting & U: mov av test, before weighting
   TT <- rep(0, nrow(ss.expr)); U <- rep(0, nrow(ss.expr))
