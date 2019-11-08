@@ -20,11 +20,13 @@ includes the following steps:
 
 * [Reading data and quality control](#Reading-data-and-quality-control)
    * [Reading raw data with a list of genes on the first column](#Reading-raw-data-with-a-list-of-genes-on-the-first-column)
-   * [Quality Control (QC): Eliminating damahged cells](#Quality-Control-(QC):-Eliminating-damahged-cells)
+   * [Quality Control & eliminating damahged cells](#Quality-Control_&_eliminating-damahged-cells)
+   * [Excluding Damaged Cells](#Excluding-Damaged-Cells)
+   * [Sorting based on nUMI per cell (from largest to smallest nUMI)](#Sorting-based-on-nUMI-per-cell-(from-largest-to-smallest-nUMI))
 * [RTAM1 & RTAM2 Normalization](#RTAM1-&-RTAM2-Normalization)
     * [RTAM1/2 normalziation](#RTAM1/2)
     * [Justification of normalized data](#justification-of-normalized-data)
-* [Clustering to cell types](#clustering-to-cell-types)
+* [Clustering to celltypes](#clustering-to-celltypes)
 * [iCNV Analysis from RNA-seq data](#iCNV-Analysis-from-RNA-seq-data)
     * [generating infered-CNV curves for (test and/or control) cells ](##sciCNV-on-normalized-data)
     * [Scaling and Filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
@@ -107,7 +109,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 ```
 
 ***
-## Quality Control (QC): Eliminating damahged cells 
+## Quality Control: Eliminating damahged cells 
 
 ### Reading UMI and mitochondrial gene expressions associated to the data
 
@@ -279,7 +281,7 @@ legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of Hou
 
 
 ***
-# Clustering to cell-types
+# Clustering to celltypes
 
 Now we cluster cells (samples) from the normalized dataset to possible cell-types applying 
 dimensionality reduction, principle Component Analysis (Canonical Correlation Analysis or ...), 
