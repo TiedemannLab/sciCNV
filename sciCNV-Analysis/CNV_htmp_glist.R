@@ -1,7 +1,7 @@
 
 
 #######################################################################################
-######                             CNV.heatmap function                         ####### 
+######                          CNV_htmp_glist function                         ####### 
 ######                   Heatmap of CNV-curves: against gene list (gnlist)      #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
@@ -20,7 +20,6 @@
 # break.glist: is a set of values each defines a vertical line that separates chromosomes
 # No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
 #       of test annd control cells in the heatmap
-
 
 CNV_htmp_glist <- function(CNV.mat2,
                            Gen.Loc,
