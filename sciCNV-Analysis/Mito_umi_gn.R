@@ -1,13 +1,12 @@
 
+
 #######################################################################################
 ######                             Mito.umi.gn function                         ####### 
 ######           To sketch mitochondrial, nUMI and nGene versus each other      #######
 ######               to detect damaged individuals within the population        #######
+######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
-######                 Tiedemann Lab - Princess Margaret Cancer centre          #######
 #######################################################################################
-
-
 
 Mito_umi_gn <- function( mat = MMS, 
              percent.mito.G = percent.mito.G,
