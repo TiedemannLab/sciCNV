@@ -62,7 +62,7 @@ sciCNV <- function(norm.mat,
   
   
   ## Assigning chromosome number to each gene sorted based on chromosme number, starts and ends 
-  gen.Loc <- read.table( "./sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
+  gen.Loc <- read.table( "../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
   Spec.genes <- which(as.matrix(gen.Loc[,1]) %in% as.matrix(rownames(norm.mat)))
   gen.Loc <-  gen.Loc[Spec.genes, c(1,2)]
   
