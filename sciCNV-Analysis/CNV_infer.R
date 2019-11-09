@@ -46,7 +46,7 @@ CNV_infer  <- function( ss.expr ,
   }
   
   ## Assigning chromosome number to each gene sorted based on chromosme number, starts and ends 
-  gen.Loc <- read.table( "./sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
+  gen.Loc <- read.table( "../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
   chr.n <- as.matrix( gen.Loc[which(as.matrix(gen.Loc[,1]) %in% new.genes), 2])
 
   
