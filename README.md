@@ -76,7 +76,7 @@ source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/mast
 
 ##
 ##
-path.code <- "."
+path.code <- "./sciCNV-Analysis"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
 source(file.path(path.code, "sciCNV.R"))
@@ -101,7 +101,7 @@ threshold. This threshold can be changed based on the physiological situation of
  e.g. when the sample is fresh or frozen and can be different in different cell-types.
 
 ```
-raw.data1 <- read.table("./Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
+raw.data1 <- read.table("./Dataset/Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
 raw.data2 <- raw.data1[ , -1]
 rownames(raw.data2) <- raw.data1[ , 1]
 W <- ncol(raw.data2)
@@ -264,7 +264,7 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
 ### Checking the balance of average expression of housekeeping genes
 
 ```
-Houskeeping_gene_list <- read.table( "./HouseKeepingGenes.txt", sep = '\t',header = TRUE)
+Houskeeping_gene_list <- read.table( "./Dataset/HouseKeepingGenes.txt", sep = '\t',header = TRUE)
 HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
 colnames(HK_mat) <- colnames(norm.data)
@@ -428,7 +428,7 @@ Then we assign associated chromosome number to each gene sorted based on chromos
 number, start and end to sketch the average iCNV curve of test cells.
 
 ```
-Gen.Loc <- read.table("./10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = '\t', header=TRUE)
+Gen.Loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
 Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% rownames(CNV.scaled))
 Assoc.Chr <-  as.matrix(Gen.Loc[Specific_genes, 2])
 Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
