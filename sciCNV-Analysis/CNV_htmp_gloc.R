@@ -109,7 +109,7 @@ CNV_htmp_gloc <- function(CNV.mat2,
   COLlist <- colnames(CNV.mat1) 
   
   ## The original list of chromosomes associated with genes in iCNV-matrix
-  Gen.Loc <- read.table( "./sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep='\t', header=TRUE)
+  Gen.Loc <- read.table( "../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep='\t', header=TRUE)
   Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% colnames(CNV.mat2))
   M_sample <-  as.matrix(Gen.Loc[Specific_genes, ])
   
