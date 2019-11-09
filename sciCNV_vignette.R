@@ -64,7 +64,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 nUMI <- t(as.numeric(colSums(raw.data2)))
 colnames(nUMI) <- colnames(raw.data2)
 
-mito.genes <-  read.table("./Dataset/Sample_100_CPCs___Mitochondrial.txt", sep = '\t',header = TRUE)
+mito.genes <-  read.table("./Dataset/Sample_100_CPCs_Mitochondrial.txt", sep = '\t',header = TRUE)
 mito.genes <- as.matrix(mito.genes[,-1])
 percent.mito.G <- t(as.matrix(colSums(mito.genes)))/ ( Col_Sum[1:No.test] + colSums(mito.genes))
 
