@@ -9,7 +9,7 @@
 
 heatmap_break_gloc <- function( ){
 
-M_origin <- read.table( "./sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.csv", sep = ',', header=TRUE)
+M_origin <- read.table( "../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
   
 ## number of segments on the genome
 No_Intrvl <- 1000
