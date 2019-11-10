@@ -29,9 +29,9 @@ includes the following steps:
     * [Justification of normalized data](#Justification-of-normalized-data)
 * [Clustering to celltypes](#clustering-to-celltypes)
 * [iCNV analysis from RNA-seq data](#iCNV-analysis-from-RNA-seq-data)
-    * [generating infered-CNV curves for test and/or control cells](#generating-infered-CNV-curves-for-test-and/or-control-cells)
-    * [Scaling and filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
-    * [Sketching the average MMPCs iCNV-curve after correction](##Sketching_ave_iCNV)
+    * [Generating infered-CNV curves for test and control cells](#Generating-infered-CNV-curves-for-test-and-control-cells)
+    * [Scaling and filtering noise of the iCNV curves](#Scaling-and-filtering-noise-of-the-iCNV-curves)
+    * [Sketching the average iCNV-curve of test cells after correction](#Sketching-the-average-iCNV-curve-of-test-cells-after-correction)
 * [Clone CNV-scores](#Clone-CNV-scores)
 * [Heatmap of CNV-curves and detecting rare subclones](#Heatmap-of-CNV-curves-and-detecting-rare-subclones)
     * [Generating heatmap](#generating-heatmap)
@@ -353,7 +353,7 @@ ctrl.index <- seq( No.test + 1, ncol(norm.data), 1)   # No of controcl cells
 tst.index <- seq(1, No.test , 1)                      # No of test cells
 ```
 
-## Generating infered-CNV curves for (test and/or control) cells 
+## Generating infered-CNV curves for test and control cells
 
 Then we perform our sciCNV function to generate iCNV curves for both tests 
 and control cells.
