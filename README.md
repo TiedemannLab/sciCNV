@@ -343,7 +343,7 @@ DimPlot(MSC, reduction = "umap",
 ![Fig3](Fig3.png)
 
 ***
-# iCNV Analysis of RNA-seq data
+# iCNV analysis from RNA-seq data
 
 Now, we run sciCNV pipeline on a dataset comprising of test and control cells to derive iCNV-curves per cell across 
 entire genome. So we firstly read the normalized matrix of test and control cells which is called _norm.tst.ctrl_ matrix,
