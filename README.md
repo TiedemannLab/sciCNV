@@ -448,7 +448,7 @@ M_NF1 <- cbind(as.matrix(Gen.Loc[Specific_genes, 1]),
 colnames(M_NF1) <- c("Genes", "Chromosomes", colnames(norm.data), "Ave test")
 ```
 
-## Sketching the average test iCNV-curves after correction
+## Sketching the average iCNV-curve of test cells after correction
 
 To see how average of test cells looks like after all above steps of making iCNV curves 
 for each single cells, we represent the iCNV curve of bulk test cells:
