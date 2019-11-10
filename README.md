@@ -229,7 +229,7 @@ title( paste("Sample1, RTAM2-normalization, cutoff ", 250," nGene ",250,sep=""),
        col.main = "brown", cex.main = 2)
 ```     
 
-## Sketching non-zero expressions
+## Justification of normalized data
 ### Checking the balance of 95% commonly expressed genes
 
 There are several existing methods to check the accuracy of normalization 
