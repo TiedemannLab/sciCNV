@@ -28,7 +28,7 @@ includes the following steps:
     * [Sketching non-zero expressions](#Sketching-non-zero-expressions)
     * [Justification of normalized data](#Justification-of-normalized-data)
 * [Clustering to celltypes](#clustering-to-celltypes)
-* [iCNV analysis from RNA-seq data](#iCNV-Aanalysis-from-RNA-seq-data)
+* [iCNV analysis from RNA-seq data](#iCNV-analysis-from-RNA-seq-data)
     * [generating infered-CNV curves for test and/or control cells](#generating-infered-CNV-curves-for-test-and/or-control-cells)
     * [Scaling and filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
     * [Sketching the average MMPCs iCNV-curve after correction](##Sketching_ave_iCNV)
