@@ -20,24 +20,22 @@ includes the following steps:
 
 * [Reading data and quality control](#Reading-data-and-quality-control)
    * [Reading raw data with a list of genes on the first column](#Reading-raw-data-with-a-list-of-genes-on-the-first-column)
-   * [Quality Control & eliminating damahged cells](#Quality-Control_&_eliminating-damahged-cells)
-   * [Excluding Damaged Cells](#Excluding-Damaged-Cells)
-   * [Sorting based on nUMI per cell (from largest to smallest nUMI)](#Sorting-based-on-nUMI-per-cell-(from-largest-to-smallest-nUMI))
-* [RTAM1 & RTAM2 Normalization](#RTAM1-&-RTAM2-Normalization)
-    * [RTAM1/2 normalziation](#RTAM1/2)
-    * [Justification of normalized data](#justification-of-normalized-data)
+   * [Quality control and eliminating damahged cells](#Quality-control_and_eliminating-damahged-cells)
+   * [Excluding damaged cells](#Excluding-damaged-cells)
+   * [Sorting based on nUMI per cell](#Sorting-based-on-nUMI-per-cell)
+* [RTAM1 and RTAM2 normalization](#RTAM1-and-RTAM2-normalization)
+    * [RTAM1/2 normalziation](#RTAM1/2-normalziation)
+    * [Sketching non-zero expressions](#Sketching-non-zero-expressions)
+    * [Justification of normalized data](#Justification-of-normalized-data)
 * [Clustering to celltypes](#clustering-to-celltypes)
-* [iCNV Analysis from RNA-seq data](#iCNV-Analysis-from-RNA-seq-data)
-    * [generating infered-CNV curves for (test and/or control) cells ](##sciCNV-on-normalized-data)
-    * [Scaling and Filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
+* [iCNV analysis from RNA-seq data](#iCNV-Aanalysis-from-RNA-seq-data)
+    * [generating infered-CNV curves for test and/or control cells](#generating-infered-CNV-curves-for-test-and/or-control-cells)
+    * [Scaling and filtering noise of the iCNV curves ](##Scaling_Noise_Filtering)
     * [Sketching the average MMPCs iCNV-curve after correction](##Sketching_ave_iCNV)
-* [Clone CNV-score](#Clone-CNV-score)
+* [Clone CNV-scores](#Clone-CNV-scores)
 * [Heatmap of CNV-curves and detecting rare subclones](#Heatmap-of-CNV-curves-and-detecting-rare-subclones)
-    * [Generating heatmap](#generating_heatmap)
-    * [Detecting subclones](#deteccting_subclones)
-
-
-
+    * [Generating heatmap](#generating-heatmap)
+    * [Detecting subclones](#deteccting-subclones)
 
 ***
 # Reading data and quality control
@@ -109,7 +107,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 ```
 
 ***
-## Quality Control: Eliminating damahged cells 
+## Quality control and eliminating damahged cells 
 
 ### Reading UMI and mitochondrial gene expressions associated to the data
 
@@ -160,7 +158,7 @@ damaged_cells <- Mito_umi_gn(mat = MMS,
 ```
 
 ***
-##  Excluding Damaged Cells
+##  Excluding damaged cells
 
 
 ```
@@ -176,7 +174,10 @@ colnames(nUMI) <- colnames(raw.data)
 dim(raw.data)
 ```
 
-##  Sorting based on nUMI per cell (from largest to smallest nUMI)
+## Sorting based on nUMI per cell 
+
+In this section to have a better understanding of the effect of UMI differencess on normalization we sort UMI counts for cells from largest to smallest nUMI.
+
 ```
 raw.data <- raw.data2[, c(colnames(sort(as.data.frame(nUMI)[1:No.test], decreasing=TRUE)),
                         colnames(sort(as.data.frame(nUMI)[(No.test+1):ncol(raw.data)], decreasing=TRUE))),
@@ -185,7 +186,7 @@ rownames(raw.data) <- rownames(raw.data2)
 ```
 
 ***
-# RTAM1 & RTAM2 Normalization
+# RTAM1 and RTAM2 normalization
 
 In the current step, we apply our novel normalization methods: RTAM1 & RTAM2, 
 to normalize raw data to a balanced, rational and consistent dataset of transcription 
@@ -228,6 +229,7 @@ title( paste("Sample1, RTAM2-normalization, cutoff ", 250," nGene ",250,sep=""),
        col.main = "brown", cex.main = 2)
 ```     
 
+## Sketching non-zero expressions
 ### Checking the balance of 95% commonly expressed genes
 
 There are several existing methods to check the accuracy of normalization 
@@ -303,7 +305,7 @@ dim(train)
 ```
 
 ***
-##  clustering the normalized data
+## Clustering the normalized data
 
 And then clustering normalized data to diverse phyno(geno)-types:
 
@@ -351,7 +353,7 @@ ctrl.index <- seq( No.test + 1, ncol(norm.data), 1)   # No of controcl cells
 tst.index <- seq(1, No.test , 1)                      # No of test cells
 ```
 
-## generating infered-CNV curves for (test and/or control) cells 
+## Generating infered-CNV curves for (test and/or control) cells 
 
 Then we perform our sciCNV function to generate iCNV curves for both tests 
 and control cells.
@@ -386,7 +388,7 @@ M_NF <- CNV.data.scaled
 ```
 ![Fig5](Fig5.png)
 
-### Noise Filteration after scaling
+### Noise filteration after scaling
 
 Based on the average bulk iCNVs calculated for test cells, one may remove redundant 
 signals.
@@ -403,7 +405,7 @@ for(w in 1:ncol(M_NF) ){
 M_NF <- as.matrix(M_NF)
 ```
 
-### Taking Square Root of iCNVs
+### Taking square root of iCNVs
 
 Now we take square root of all iCNV values (or their absolute value when they are negative) 
 which converts values around 1 (-1) to 1 (-1) and values less than 0.5 (greater than -0.5) 
@@ -464,7 +466,7 @@ Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
 ![Fig6](Fig6.png)
 
 ***
-# Clone CNV-score
+# Clone CNV-scores
 
 Performing _CNV_score_  function, we calculate CNV-score for test and control 
 cells, which shows the likeness of test and control cells to the average iCNV-curve 
