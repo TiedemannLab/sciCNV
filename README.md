@@ -20,7 +20,7 @@ includes the following steps:
 
 * [Reading data and quality control](#Reading-data-and-quality-control)
    * [Reading raw data with a list of genes on the first column](#Reading-raw-data-with-a-list-of-genes-on-the-first-column)
-   * [Quality control and eliminating damahged cells](#Quality-control_and_eliminating-damahged-cells)
+   * [Quality control](#Quality-control)
    * [Excluding damaged cells](#Excluding-damaged-cells)
    * [Sorting based on nUMI per cell](#Sorting-based-on-nUMI-per-cell)
 * [RTAM1 and RTAM2 normalization](#RTAM1-and-RTAM2-normalization)
@@ -107,7 +107,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 ```
 
 ***
-## Quality control and eliminating damahged cells 
+## Quality control 
 
 ### Reading UMI and mitochondrial gene expressions associated to the data
 
