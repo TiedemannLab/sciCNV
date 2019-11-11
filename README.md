@@ -53,23 +53,6 @@ phyno(geno)-types, as doublets (triplets,  ... ) of each type can be only
 compared to those features (such as transcription level, number of expressed genes, 
 total number of UMI for each cell, ... )  that are specific to the same type.
 
-```
-path.code <- "./sciCNV-Analysis"
-source(file.path(path.code, "Mito_umi_gn.R"))
-source(file.path(path.code, "RTAM_normalization.R"))
-source(file.path(path.code, "sciCNV.R"))
-source(file.path(path.code, "Scaling_CNV.R"))
-source(file.path(path.code, "CNV_score.R"))
-source(file.path(path.code, "sciCNV.R"))
-source(file.path(path.code, "Sketch_AveCNV.R"))
-source(file.path(path.code, "CNV_htmp_glist.R"))
-source(file.path(path.code, "CNV_htmp_gloc.R"))
-source(file.path(path.code, "Opt_MeanSD_RTAM1.R"))
-source(file.path(path.code, "Opt_MeanSD_RTAM2.R"))
-source(file.path(path.code, "heatmap_break_glist.R"))
-source(file.path(path.code, "heatmap_break_gloc.R"))
-```
-
 ## Reading raw data with a list of genes on the first column
 
 Starting with raw data in which gene symbols are as features and cell identities are 
