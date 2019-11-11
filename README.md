@@ -54,26 +54,6 @@ compared to those features (such as transcription level, number of expressed gen
 total number of UMI for each cell, ... )  that are specific to the same type.
 
 ```
-library(devtools)
-library(Seurat)
-library(dplyr)
-library(Matrix)
-library(qlcMatrix)
-library(devtools)
-library(svd)
-library(ggplot2)
-library(ggridges)
-library(viridis)
-require(scales)
-library(RColorBrewer)
-library(Rtsne)
-library(reticulate)
-library(robustbase)
-library(umap)
-source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
-
-##
-##
 path.code <- "./sciCNV-Analysis"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
