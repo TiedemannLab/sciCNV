@@ -28,9 +28,10 @@ library(umap)
 source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
 
 ##
-path.code <- "./sciCNV-Analysis/"
+path.code <- "~/Desktop/Scripts/Our_Final_codes/sciCNV-Analysis"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
+source(file.path(path.code, "RTAM_normalization_fixed.R"))
 source(file.path(path.code, "sciCNV.R"))
 source(file.path(path.code, "Scaling_CNV.R"))
 source(file.path(path.code, "CNV_score.R"))
@@ -45,14 +46,14 @@ source(file.path(path.code, "heatmap_break_gloc.R"))
 
 ## Reading raw data with a list of genes on the first column
 
-raw.data1 <- read.table("./Dataset/Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
-raw.data2 <- as.matrix(raw.data1[ , -1])
+raw.data1 <- read.table(file.choose(), sep = '\t',header = TRUE)  
+raw.data2 <- as.matrix(raw.data1[ , -c(1,2,3,4)])
 rownames(raw.data2) <- raw.data1[ , 1]
-colnames(raw.data2) <- colnames(raw.data1[ , -1])
+colnames(raw.data2) <- colnames(raw.data1[ , -c(1,2,3,4)])
 
 W <- ncol(raw.data2)
-No.test <- 100                     # Number of test cells
-No.control <- ncol(raw.data2)-100  # Number of control cells
+No.test <- ncol(raw.data2) #100                     # Number of test cells
+No.control <- ncol(raw.data2)-No.test# Number of control cells
 Col_Sum <- t(as.numeric(colSums(raw.data2)))
 
 ##################################################
@@ -63,7 +64,7 @@ Col_Sum <- t(as.numeric(colSums(raw.data2)))
 nUMI <- t(as.numeric(colSums(raw.data2)))
 colnames(nUMI) <- colnames(raw.data2)
 
-mito.genes <-  read.table("./Dataset/Sample_100_CPCs_Mitochondrial.txt", sep = '\t',header = TRUE)
+mito.genes <- read.table(file.choose(), sep = '\t',header = TRUE)
 mito.genes <- as.matrix(mito.genes[,-1])
 percent.mito.G <- t(as.matrix(colSums(mito.genes)))/ ( Col_Sum[1:No.test] + colSums(mito.genes))
 
@@ -83,7 +84,7 @@ damaged_cells <- Mito_umi_gn(mat = MMS,
                              nUMI = nUMI,
                              nGene = nGene1,
                              No.test = No.test,
-                             drop.mads = 1)
+                             drop.mads = 3)
 
 #----------------------------
 ##  Excluding Damaged Cells
@@ -104,20 +105,33 @@ colnames(nUMI) <- colnames(raw.data)
 #--------------------------------------------------
 ##  Sorting based on UMI (from largest to smallest)
 #--------------------------------------------------
+if(No.control > 0){
 raw.data <- raw.data2[, c(colnames(sort(as.data.frame(nUMI)[1:No.test], decreasing=TRUE))
                           ,colnames(sort(as.data.frame(nUMI)[(No.test+1):ncol(raw.data)], decreasing=TRUE))
                           ), drop=FALSE]
+} else {
+  raw.data <- raw.data2[, colnames(sort(data.frame(nUMI)[1, ], decreasing=TRUE)), drop=FALSE]
+}
 rownames(raw.data) <- rownames(raw.data2) 
 
 #----------------------------
 ##  RTAM1/2 Normalziation
 #----------------------------
-norm.data <- RTAM_normalization(mat = raw.data,            
+norm.data <- RTAM_normalization_fixed(mat = raw.data,            
                                 method = "RTAM2",      
                                 Min_nGn  = 250,       
                                 Optimizing = FALSE)
 rownames(norm.data) <- rownames(raw.data2) 
 colnames(norm.data) <- colnames(raw.data)
+
+write.table(norm.data,
+            "RTBM277_originalData_Entire_MM_NormalziedData.txt",
+            quote = FALSE, 
+            sep = "\t",
+            row.names = TRUE,
+            col.names = TRUE)
+
+
 
 ## Sketching non-zero expressions
 
