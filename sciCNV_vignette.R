@@ -28,10 +28,9 @@ library(umap)
 source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
 
 ##
-path.code <- "~/Desktop/Scripts/Our_Final_codes/sciCNV-Analysis"
+path.code <- "./sciCNV-Analysis"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
-source(file.path(path.code, "RTAM_normalization_fixed.R"))
 source(file.path(path.code, "sciCNV.R"))
 source(file.path(path.code, "Scaling_CNV.R"))
 source(file.path(path.code, "CNV_score.R"))
