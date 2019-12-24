@@ -236,7 +236,7 @@ Mean_BB12 <- colMeans(HK_mat[,k][HK_mat[,k]>0])
 
 par( new=TRUE)
 points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
-legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of Houskeeping gene expressions"))
+legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of houskeeping gene expressions"))
 ```
 
 #![Fig3](Fig2_2.png)
