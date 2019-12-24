@@ -232,11 +232,8 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
 Houskeeping_gene_list <- read.table( "./Dataset/HouseKeepingGenes.txt", sep = '\t',header = TRUE)
 HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
-colnames(HK_mat) <- colnames(norm.data)
-Mean_BB12 <- matrix(0, ncol = ncol(norm.data) , nrow = 1)
-for(k in 1: (ncol(norm.data))){
-Mean_HK_mat[1,k] <- as.numeric(mean(HK_mat[,k][HK_mat[,k]>0]) )
-}
+Mean_BB12 <- colMeans(HK_mat[,k][HK_mat[,k]>0])
+
 par( new=TRUE)
 points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
 legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of Houskeeping gene expressions"))
