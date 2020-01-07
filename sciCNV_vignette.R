@@ -190,6 +190,8 @@ train1 <- as.matrix(norm.data)
 colnames(train1) <- colnames(norm.data)
 train <- as.matrix(train1[which(rowSums(train1 != 0) >= 1  ), ] )
 
+nUMI <- as.matrix(nUMI[1 , colnames(train)])
+nGene <- as.matrix(nGene[1 , colnames(train)])
 #---------------------------------
 ##  clustering the normalized data
 #---------------------------------
