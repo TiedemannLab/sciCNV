@@ -263,7 +263,10 @@ rownames(train1) <- rownames(Scaled_Normalized_log)
 colnames(train1) <- colnames(Scaled_Normalized_log)
 
 train <- as.matrix(train1[which(rowSums(train1 != 0) >= 1  ), ] )
-dim(train)
+
+# Updating list of cells in nUMI and nGene for lateron analyses
+nUMI <- as.matrix(nUMI[1 , colnames(train)])
+nGene <- as.matrix(nGene[1 , colnames(train)])
 ```
 
 ***
