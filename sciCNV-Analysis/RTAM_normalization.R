@@ -19,6 +19,9 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
                                Min_nGn,       # minimum number of genes per cell, below which cells are excluded. 
                                               # Defines the smallest least complex allowable cell. (default = 250 genes per cell)
                                Optimizing     # True or FALSE options to run optimization part of teh ccode or not
+                               #Nt            # Nt = the number of top-ranked (highly-rexpressed) genes used to normalize gene expression 
+                                              # intensities per cell. Ideally, less than or equal to Min_nGn.
+  
 ){
   
   # argument validations
@@ -114,9 +117,15 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
     KK <- t(as.matrix(which(t(as.matrix(nGene)) < Min_nGene) ))
     ranked_mat2 <- ranked_mat
+    ##
     ranked_mat <- as.matrix( ranked_mat2[ , -KK ] )
     rownames(ranked_mat) <- rownames(general)
     colnames(ranked_mat) <- colnames(general[, -KK])
+    ##
+    normlog_mat <- as.matrix( normlog_mat[ , -KK ] )
+    rownames(normlog_mat) <- rownames(general) 
+    colnames(normlog_mat) <- colnames(general[, -KK])
+    ##
     Order_Matrix <-  as.matrix( Order_Matrix[ , -KK ] )
     if ( method == c("RTAM2")){
       G_mtrx <- as.matrix( G_mtrx[ , -KK ] )
@@ -228,7 +237,10 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
     pSum[1,] <- as.matrix( colSums(top_mat))
     
-    MIN_intesnse <- mean( pSum)   
+    MIN_intesnse <- mean( pSum)
+    
+    print("mean of pSums:")
+    print(MIN_intesnse)
     
     for(j in 1:ncol(G_mtrx)){
       hh <- 0
@@ -329,4 +341,5 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   
   
 }
+
 
