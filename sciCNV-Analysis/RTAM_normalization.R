@@ -19,16 +19,11 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
                                Min_nGn,       # minimum number of genes per cell, below which cells are excluded. 
                                               # Defines the smallest least complex allowable cell. (default = 250 genes per cell)
                                Optimizing     # True or FALSE options to run optimization part of teh ccode or not
-                               #Nt            # Nt = the number of top-ranked (highly-rexpressed) genes used to normalize gene expression 
-                                              # intensities per cell. Ideally, less than or equal to Min_nGn.
+
   
 ){
   
   # argument validations
-  #if( is.na(mat) ){
-  #  stop("Error, the given matrix is not in the accurate format")
-  #}
-  
   if( is.na(method) ){
     method <- c("RTAM2")
     flog.info(sprintf("The considered normalization method is %s",method))
@@ -39,11 +34,6 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     stop( "The chosen normalization method is not valid.")
   }
   
-  #if( (Optimizing=="TRUE") & (! is.na(Nt)) 
-  #    ){
-  #  stop("Error, Nt (the number of top-ranked genes) can be specified only if Optimizing = FALSE")
-  #}
-  
   if( is.na(Optimizing) ){
     Optimizing = "FALSE"
   }
@@ -51,10 +41,6 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   if( Optimizing == "FALSE" ){
     Nt <- Min_nGn
   } 
-  
-  #if ( (!is.na(Nt) ) &  ( Nt > Min_nGn ) ){
-  #  stop("Error, Nt is required to be not greater than Min_nGn")
-  #}
   
   general <- as.matrix(mat) #[ , -1])
   rownames(general) <- rownames(mat) #mat[ , 1]
