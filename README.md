@@ -16,9 +16,7 @@ _Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Paola Neri, 
 
 Chromosome copy number variations (CNVs) are a near-universal feature of cancer however their specific effects on cellular function are poorly understood. Single-cell RNA sequencing (scRNA-seq) can reveal cellular gene expression however cannot directly link this to CNVs. Here we report scRNA-seq normalization methods (RTAM1 and RTAM2) that improve gene expression alignment between cells, increasing the sensitivity of scRNA-seq for CNV detection. We also report sciCNV, a tool for inferring CNVs from scRNA-seq. Together, these tools enable dual profiling of DNA and RNA in single cells. We apply these techniques to multiple myeloma and examine the cellular effects of pervasive cancer CNVs +8q and +1q. As expected, cells with +8q23-24 upregulate MYC-target genes, mRNA processing and protein synthesis; but also upregulate DEPTOR and have smaller transcriptomes. Cells with +1q21-44 reconfigure translation and unexpectedly suppress unfolded protein stress whilst increasing proliferation, oxidative phosphorylation and MCL1. Using scRNA-seq we reconstruct the effects of cancer CNVs on cellular programs.
 
-
-###############################################
-
+--------------------
 
 ## Introduction
 
