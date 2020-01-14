@@ -1,65 +1,57 @@
+# README FILE 
+
+## This file provides an overview of the Tiedemann Lab scRNA-seq analysis pipeline that includes: 
+- scRNA-seq RTAM data normalization
+- Single-cell Inferred Copy Number Variation (sciCNV)
+- Quality control (QC) 
+- visualization of results
 
 
-# A Short Explanation to sciCNV Pipeline
+## Reference
+
+_Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Paola Neri, Ines Tagoug, Rodger E. Tiedemann, **Dissecting the effects of DNA copy number variations on transcriptional programs at single-cell resolution**, Submitted_
+
+
+## Summary
+
+Chromosome copy number variations (CNVs) are a near-universal feature of cancer however their specific effects on cellular function are poorly understood. Single-cell RNA sequencing (scRNA-seq) can reveal cellular gene expression however cannot directly link this to CNVs. Here we report scRNA-seq normalization methods (RTAM1 and RTAM2) that improve gene expression alignment between cells, increasing the sensitivity of scRNA-seq for CNV detection. We also report sciCNV, a tool for inferring CNVs from scRNA-seq. Together, these tools enable dual profiling of DNA and RNA in single cells. We apply these techniques to multiple myeloma and examine the cellular effects of pervasive cancer CNVs +8q and +1q. As expected, cells with +8q23-24 upregulate MYC-target genes, mRNA processing and protein synthesis; but also upregulate DEPTOR and have smaller transcriptomes. Cells with +1q21-44 reconfigure translation and unexpectedly suppress unfolded protein stress whilst increasing proliferation, oxidative phosphorylation and MCL1. Using scRNA-seq we reconstruct the effects of cancer CNVs on cellular programs.
+
+
+###############################################
+
+
 ## Introduction
-An important challenge in single-cell study using RNA-seqs and specifically calling 
-copy number variations is to provide an unbiased (normalized) dataset which is bale to 
-reflect real biological interface and actual functionality of genes across entire 
-genome against a negative control. This can be even more challenging if one wants to 
-merge two datasets (e.g. merging test sample and control sample).
 
-Here, we introduce a new bioinformatics tool developed to overcome these 
-problems and to provide an accurate inferred copy-number-alteration analysis to 
-study the evolutionary pathogenesis of a targeted disease/disorder. Our analysis 
-can be widely applied to any malignancy/abnormality and in any 
-context of intra-tumoral/malignant/infectious heterogeneous systems.
+## 1.RTAM Normalization
+Single-cell RNA-seq enables gene expression comparisons between cells. However, the accuracy of such comparisons depends critically upon data normalization. As the best methods for normalizing single-cell transcriptomes remain controversial we developed RTAM-1 and -2. The RTAM normalization approach originates from a consideration of the strengths and weaknesses of scRNA-seq. Whereas lowly expressed genes are detected within single cells with low resolution (due to integer transcript counts) and show significant stochastic variation, highly expressed genes are robustly detected and show finer quantisation of variation relative to intensity. RTAM thus utilizes highly-expressed genes, whose expression is resolved with greater accuracy, to align cellular transcriptomes. Genes are ranked by expression in each cell and the summed intensities of the top-ranked genes is standardized in log-space using cell-specific non-linear differential adjustments of gene expression determined either by gene expression rank (RTAM1) or by gene expression intensity (RTAM2). The rationale and derivation of the underlying mathematics is described in the supplemental data file associated with the reference manuscript.
 
-Single-cell inferred Copy Number Variation (sciCNV) pipeline is a novel 
-strategy that we developed to likely answer all these challenges. Our pipeline 
-includes the following steps:
+## 2. sciCNV
+To optimize DNA copy number estimates from gene expression, and to mitigate against data sparsity in single cells, we developed a two-pronged approach, called sciCNV (described in the supplemental data file associated with the reference manuscript). Briefly, RTAM-normalized gene expression data from single cells is aligned with matched gene expression data from control cells of a similar lineage to develop expression disparity scores, which are averaged across genomic regions in a moving window. Gene expression in the control cells is derived from scRNA-seq and is averaged; as a result the expression of each gene is weighted according to the probability of detection/non-detection by scRNA-seq amongst control cells, providing a balanced comparison with single test cell data, where signal dropout is prominent for many genes. The influence of stoichastic noise and detection drop out is minimized when multiple genes are compared. In the second method, the expression disparity values are exchanged for binary values, which are then summed cumulatively as a function of genomic location; the gradient of this function yields a second estimate of CNV that is sensitive to small concordant expression variations in contiguous genes and that is insensitive to large single-gene variations. The CNV estimates of the two methods are combined by their geometric mean. 
 
-* [Reading data and quality control](#Reading-data-and-quality-control)
-   * [Reading raw data with a list of genes on the first column](#Reading-raw-data-with-a-list-of-genes-on-the-first-column)
+## Overview of the sciCNV Pipeline
+The pipeline includes the following steps:
+
+* [Data organization and quality control](#Data-organization-and-quality-control)
+   * [Raw data](#Raw-data)
    * [Quality control](#Quality-control)
-   * [Excluding damaged cells](#Excluding-damaged-cells)
-   * [Sorting based on nUMI per cell](#Sorting-based-on-nUMI-per-cell)
+   * [Cell ranking by transcript count (nUMI)](#Cell-ranking-by-transcript-count-(nUMI))
 * [RTAM1 and RTAM2 normalization](#RTAM1-and-RTAM2-normalization)
-    * [RTAM1/2 normalziation](#RTAM1/2-normalziation)
-    * [Sketching non-zero expressions](#Sketching-non-zero-expressions)
-    * [Justification of normalized data](#Justification-of-normalized-data)
-* [Clustering to celltypes](#clustering-to-celltypes)
-* [iCNV analysis from RNA-seq data](#iCNV-analysis-from-RNA-seq-data)
-    * [Generating infered-CNV curves for test and control cells](#Generating-infered-CNV-curves-for-test-and-control-cells)
-    * [Scaling and filtering noise of the iCNV curves](#Scaling-and-filtering-noise-of-the-iCNV-curves)
-    * [Sketching the average iCNV-curve of test cells after correction](#Sketching-the-average-iCNV-curve-of-test-cells-after-correction)
-* [Clone CNV-scores](#Clone-CNV-scores)
-* [Heatmap of CNV-curves and detecting rare subclones](#Heatmap-of-CNV-curves-and-detecting-rare-subclones)
-    * [Generating heatmap](#generating-heatmap)
-    * [Detecting subclones](#deteccting-subclones)
+    * [Plotting transcript counts per gene per cell](#Plotting-transcript-counts-per-gene-per-cell)
+    * [QC of normalized data](#QC-of-normalized-data)
+* [Clustering to cell phenotypes](#clustering-to-cell-phenotypes)
+* [Single cell inferred CNV (sciCNV) analysis from scRNA-seq data](#Single-cell-inferred-CNV-(sciCNV)-analysis-from-scRNA-seq-data)
+* [Tumor clone CNV scores](#Tumor-clone-CNV-scores)
+* [Heatmap of sciCNV profiles of cells](#Heatmap-of-sciCNV-profiles-of-cells)
+    * [Detecting subclones](#detecting-subclones)
 
 ***
-# Reading data and quality control
+# Data organization and quality control
 
-In this section, we firstly read raw-data in which transcription values per gene is given for 
-a set of single-cells. There exist at least two important provocations of removing 
-1) Damaged cells 
-2) Doublets (triplets, ...)
+In this section, the raw data (representing unique transcript counts per gene per cell) is read and organized. Data from poor QC cells (identified by high mitochondrial RNA content relative to nuclear/cytosolic RNA) is excluded. 
 
-We answer to the first provocation by considering the appropriate level of 
-mitochondrial gene expressions in specific organs; to be accurate the percentage 
-of mitochondrial level. Answering to the second provocation is 
-not easy as we firstly need to separate the population of cells (samples) to diverse 
-phyno(geno)-types, as doublets (triplets,  ... ) of each type can be only 
-compared to those features (such as transcription level, number of expressed genes, 
-total number of UMI for each cell, ... )  that are specific to the same type.
+## Raw data
 
-## Reading raw data with a list of genes on the first column
-
-Starting with raw data in which gene symbols are as features and cell identities are 
-as column-names, we firstly try to exclude damaged cells when the mitochondrial 
-gene expressions of those cells are relatively higher than a specific (organ-dependent) 
-threshold. This threshold can be changed based on the physiological situation of cells,
- e.g. when the sample is fresh or frozen and can be different in different cell-types.
+The raw data, consisting of a matrix of unique transcript counts per gene per cell with gene symbols as features and cell identitifiers (e.g. barcodes) as column-names, is read.
 
 ```
 raw.data1 <- read.table("./Dataset/Sample_100_CPCs__with__100_NPCs.txt", sep = '\t',header = TRUE)  
@@ -69,14 +61,12 @@ W <- ncol(raw.data2)
 Col_Sum <- t(as.numeric(colSums(raw.data2)))
 ```
 
-***
+
 ## Quality control 
 
-### Reading UMI and mitochondrial gene expressions associated to the data
+### Total transcript count and mitochondrial transcript count per cell
 
-Inserting number of UMIs (nUMIs) and transcription values of mitochondrial genes, we 
-calculate the percentage of mitochondrial levels and remove cells with a higher 
-expression of mitochondrial gene in comparison to a threshold.
+The total number of transcripts with unique molecular identifiers (nUMIs) per cell is calculated, together with the fraction of transcripts from mitochondrial genes.
 
 ```
 nUMI <- t(as.numeric(colSums(raw.data2)))
@@ -94,22 +84,22 @@ nGene1 <- t(as.numeric(nGene1))
 colnames(nGene1) <- colnames(raw.data2)
 ```
 
-![Fig1](Fig1.png)
-
-
 ***
-Now we read the 10x Genomics object and try to remove damaged cells 
-across entire population.
+Now the scRNAseq data object is read.
 
 ```
 MMS <- CreateSeuratObject(counts = raw.data2, project = "Sample1")
 ```
 
-### Defining threshold to remove damaged cells
+![Fig1](Fig1.png)
 
-In case there is no tissue-specific threshold for the percentage of mitochondrial gene 
-expressions, we usually consider the distribution of such percentages and assign 3 MAD 
-as the threshold to exclude damaged cells.
+
+
+
+### Damaged or non viable cells
+
+Damaged, non viable or partial cells can be identified by their high content of mitochondrial transcripts relative to other mRNA or by their low expression of genes. In our usage, cells were excluded if the total transcript count from 13 mitochondrial genes represented >5% of total cellular transcripts or if the mitochondrial gene transcript count for the cell was > 3 median absolute deviations (MAD) from the median for all cells, however other thresholds may be appropriate according to the context. In a later step, partial or non viable cells with less than a threshold number (e.g. 250) of detectable genes are also excluded.
+
 
 ```
 damaged_cells <- Mito_umi_gn(mat = MMS, 
@@ -121,7 +111,7 @@ damaged_cells <- Mito_umi_gn(mat = MMS,
 ```
 
 ***
-##  Excluding damaged cells
+###  Exclusion of poor quality cells with excess mitochondrial transcripts
 
 
 ```
@@ -137,9 +127,9 @@ colnames(nUMI) <- colnames(raw.data)
 dim(raw.data)
 ```
 
-## Sorting based on nUMI per cell 
+## Cell ranking by transcript count (nUMI)
 
-In this section to have a better understanding of the effect of UMI differencess on normalization we sort UMI counts for cells from largest to smallest nUMI.
+To identify any effects (biases) in normalization related to cell size/ sequence depth, cells are sorted according to their total transcript counts (nUMI) from largest to smallest nUMI.
 
 ```
 raw.data <- raw.data2[, c(colnames(sort(as.data.frame(nUMI)[1:No.test], decreasing=TRUE)),
@@ -151,9 +141,7 @@ rownames(raw.data) <- rownames(raw.data2)
 ***
 # RTAM1 and RTAM2 normalization
 
-In the current step, we apply our novel normalization methods: RTAM1 & RTAM2, 
-to normalize raw data to a balanced, rational and consistent dataset of transcription 
-values.
+RTAM1 or RTAM2 normalization procedures are applied. The number of highly expressed genes used for the alignment of transctiptomes can be specified. More information can be found in the reference supplemental materials and in the RTAM script.
 
 ```
 norm.data <- RTAM_normalization(mat = raw.data,            
@@ -164,10 +152,9 @@ rownames(norm.data) <- rownames(raw.data2)
 colnames(norm.data) <- colnames(raw.data)
 ```
 
-## Sketching non-zero expressions
+## Plotting transcript counts per gene per cell
 
-To observe the (non-zero) expression levels of normalized data, we sketch them all in 
-a unique figure.
+To compare the normalized transcriptomes, the normalized expression of each gene in each cell is plotted. As transcript counts are integers, the expression values for many lowly expressed genes (with n=1,2,3 .. transcripts) are identical and align on tiers. Each tier may represent multiple genes in any single cell. 
 
 ```
 graphics.off()
@@ -192,16 +179,16 @@ title( paste("Sample1, RTAM2-normalization, cutoff ", 250," nGene ",250,sep=""),
        col.main = "brown", cex.main = 2)
 ```     
 
-## Justification of normalized data
-### Checking the balance of 95% commonly expressed genes
+## QC of normalized data
 
-There are several existing methods to check the accuracy of normalization 
-(removing/reducing batch effects). In here we consider two methods: 
-1) Considering the average expression of those genes that are expressed in majority 
-of cells (for instance common genes in 95% of cells) which are supposed to be almost equal across
-entire population after normalization.
-2) Using the average gene expression for a list of house-keeping genes (or a spike-in list of genes) 
-which is assumed to remain unchanged and about equal after normalization.
+To assess the alignment of the normalized cellular transcriptomes, the mean or median expression in each cell of large sets of uniquitous genes is examined, including: 
+
+(1) a curated set of housekeeping genes (HKG), or 
+(2) the set of all commonly-expressed genes (detected in >95% of the cells studied)
+
+Whilst the expression of any individual gene is expected to vary between cells for both biological and technical reasons, the average expression per cell of a large set of ubiquitous genes should be similar, particularly amongst cells of the same lineage. 
+
+### The average expression of commonly-expressed genes (with detectable expression in >95% cells in the dataset)
 
 ```
 Sqnce <- seq(1,ncol(norm.data),1)
@@ -226,7 +213,7 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
 ![Fig2](Fig2_1.png)
 
 
-### Checking the balance of average expression of housekeeping genes
+### The average expression of housekeeping genes
 
 ```
 Houskeeping_gene_list <- read.table( "./Dataset/HouseKeepingGenes.txt", sep = '\t',header = TRUE)
@@ -245,17 +232,9 @@ legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of hou
 
 
 ***
-# Clustering to celltypes
+# Clustering to cell phenotypes
 
-Now we cluster cells (samples) from the normalized dataset to possible cell-types applying 
-dimensionality reduction, principle Component Analysis (Canonical Correlation Analysis or ...), 
-tSNE/UMAP methods to detect and sketch diverse clusters.
-
-***
-##  Excluding non-expressed genes
-
-Since differential gene expressions define diverse clusters, at this stage 
-we remove those genes which do not represent any expressions across entire population.
+Cells are clustered into {lineages/phenotypes/subclones} by dimensionality reduction of normalized transcriptomes, using principle component analysis or tSNE/UMAP methods. As this clustering is driven by differential gene expression, non informative genes which are not expressed are excluded:
 
 ```
 train1 <- as.matrix(norm.data)
@@ -269,16 +248,7 @@ nUMI <- as.matrix(nUMI[1 , colnames(train)])
 nGene <- as.matrix(nGene[1 , colnames(train)])
 ```
 
-***
-## Clustering the normalized data
-
-And then clustering normalized data to diverse phyno(geno)-types:
-
-
-## Finding matrix of single cells (MSC) as a seurat object for clustering
-
-We generate a Seurat object to run tSNE/UMAP clustering methods through this 
-package.
+tSNE/UMAP clustering of normalized data is performed on a matrix of single cells (MSC), generated as a Seurat object. 
 
 ```
 MSC <- CreateSeuratObject(counts = train, project = "sample1")
@@ -308,20 +278,24 @@ DimPlot(MSC, reduction = "umap",
 ![Fig3](Fig3.png)
 
 ***
-# iCNV analysis from RNA-seq data
+# Single cell inferred CNV (sciCNV) analysis from scRNA-seq data
 
-Now, we run sciCNV pipeline on a dataset comprising of test and control cells to derive iCNV-curves per cell across 
-entire genome. So we firstly read the normalized matrix of test and control cells which is called _norm.tst.ctrl_ matrix,
+The sciCNV pipeline is applied to a dataset comprising test and control cells to infer the genomic CNV profile of each cell. For full information on the approach, please refer to the reference supplemental materials.
+
+(1) input the normalized matrix of test and control cells which is called _norm.tst.ctrl_ matrix,
 
 ```
 ctrl.index <- seq( No.test + 1, ncol(norm.data), 1)   # No of controcl cells
 tst.index <- seq(1, No.test , 1)                      # No of test cells
 ```
 
-## Generating infered-CNV curves for test and control cells
+(2) The sciCNV function is used to generate preliminary single cell inferred CNV curves for cells in the matrix. 
 
-Then we perform our sciCNV function to generate iCNV curves for both tests 
-and control cells.
+Two variables can be used to enhance the quality of the output according to the input data.
+
+The variable sharpness is used to define the sharpness (resolution) of the CNV analysis. The default value is 1.0; this can be adjusted (e.g. in the range 0.6-1.4) according to the sample data sparsity: higher values permit sharper detection of small CNV but require greater data density; lower values help offset sparse data.
+
+Baseline adjustment: For the default sciCNV analysis an assumption is made that chromosome gains and losses are approximately balanced and that the median copy number result for genes in each cell is zero. When these assumptions are substantially invalid (for example, as in the case of a cell with a large number of trisomies with substantial net genomic gain), the sciCNV analysis can be re-run using a baseline correction to correct the CNV zero set point and improve CNV detection. 'baseline' refers to a fraction representing the approximate net genomic change, where zero reflects balanced losses and gains, and 1 represents copy number gain of the entire genome. A positive fraction indicated net gain and a negative fraction indicates net genomic loss. Please refer to the reference supplemental materials.
 
 ```
 CNV.data <- sciCNV(norm.mat = norm.data, 
@@ -331,21 +305,15 @@ CNV.data <- sciCNV(norm.mat = norm.data,
                    baseline = 0)
 ```
 
+**Note:** _For larger datasets we recommend running this part of the algorithm on cluster (i.e. run a .bash) due 
+to the calculation cost required to generate sciCNV-curves for each cell_.
 
 ![Fig4](Fig4.png)
 
 
 
-***
-## Scaling and filtering noise of the iCNV curves 
+(3) The preliminary sciCNV profile matrix is scaled such that single (1) copy number gain/losses yield values of +1/-1. 
 
-In here, we scaling iCNV-curves to adjust one copy number gain/losses to 
-height +1/-1 or so if applicable. Then we define M_NF as matrix of noise-free data 
-for test/control cells which is attached to the average expression of test cells 
-(samples).
-
-**Note:** _We suggest you to run this part of the algorithm on cluster (i.e. simply run a .bash) for larger datasets due 
-to the calculation cost required to generate iCNV-curves for each of the single individuals (in here single-cells)_.
 
 ```
 CNV.data.scaled <- Scaling_CNV( CNV.data, n.TestCells = No.test, scaling.factor = 0.4)
@@ -353,10 +321,7 @@ M_NF <- CNV.data.scaled
 ```
 ![Fig5](Fig5.png)
 
-### Noise filteration after scaling
-
-Based on the average bulk iCNVs calculated for test cells, one may remove redundant 
-signals.
+(4) As single cell CNV should be integers, preliminary sciCNV values falling below a noise threshold (0.4 or a user-specified threshold) were set to zero. We define M_NF as the noise-free data matrix, which is attached to the average expression of test cells.
 
 ```
 noise.thr = 0.4   # Noise threshold
@@ -369,12 +334,8 @@ for(w in 1:ncol(M_NF) ){
 }
 M_NF <- as.matrix(M_NF)
 ```
+(5) As the preliminary sciCNV values are multiples of two CNV methods, the square root of the preliminary values is taken, to produce the geometric mean of the two methods.
 
-### Taking square root of iCNVs
-
-Now we take square root of all iCNV values (or their absolute value when they are negative) 
-which converts values around 1 (-1) to 1 (-1) and values less than 0.5 (greater than -0.5) 
-to 0. This way we converge one copy-gain/loss t0 1/-1 and weaker expressions to zero.
 
 ```
 for(w in 1:ncol(M_NF)){
@@ -391,8 +352,7 @@ rownames(M_NF) <- rownames(CNV.data.scaled)
 colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))], "AveTest")
 ```
 
-Then we assign associated chromosome number to each gene sorted based on chromosome 
-number, start and end to sketch the average iCNV curve of test cells.
+(6) In order to plot sciCNV profiles by genomic location, rather than by gene rank, genomic locations are determined.
 
 ```
 Gen.Loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
@@ -400,11 +360,7 @@ Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% rownames(CNV.scaled))
 Assoc.Chr <-  as.matrix(Gen.Loc[Specific_genes, 2])
 Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
 ```
-
-### Finalizing the iCNV-matrix by attaching gene-name and chromosome number lists
-
-As one may need to attach gene-names and the list of chromosome numbers to the M_NF matrix, 
-we finalize the iCNV matrix by adding these two columns of information.
+(7) The sciCNV M_NF matrix is finalized by including gene names, chromosome and genomic locations.
 
 ```
 M_NF1 <- cbind(as.matrix(Gen.Loc[Specific_genes, 1]), 
@@ -413,10 +369,7 @@ M_NF1 <- cbind(as.matrix(Gen.Loc[Specific_genes, 1]),
 colnames(M_NF1) <- c("Genes", "Chromosomes", colnames(norm.data), "Ave test")
 ```
 
-## Sketching the average iCNV-curve of test cells after correction
-
-To see how average of test cells looks like after all above steps of making iCNV curves 
-for each single cells, we represent the iCNV curve of bulk test cells:
+(8) The average sciCNV profile of test cells can be reviewed:
 
 ```
 M_NF2 <- as.matrix(M_NF1)
@@ -431,21 +384,15 @@ Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
 ![Fig6](Fig6.png)
 
 ***
-# Clone CNV-scores
+# Tumor clone CNV scores
 
-Performing _CNV_score_  function, we calculate CNV-score for test and control 
-cells, which shows the likeness of test and control cells to the average iCNV-curve 
-of bulk test cells. Applying this method, we clone cells (samples) based on their 
-CNV-scores which in fact separates test and control individuals.
+sciCNV can be used to identify cancer cells, distinguishing these from normal cells on the basis of their CNV profile. The sciCNV profile of single cells is assessed against the average sciCNV profile of tumor cells. 
 
 ```
 TotScore <- CNV_score( M_nf = M_NF )
 ```
 
-
-
-
-Sketching tumor scores for all cells showing segregation of test and control CNV-scores:
+Tumor CNV scores for single cells are sketched, showing the segregation of normal plasma cells (NPC) and tumor plasma cells by their CNV scores:
 
 ```
 TotScoreSort0 <- sort(TotScore[1,1:No.test])
@@ -484,22 +431,21 @@ for(i in 1:length(mylevels)){
 ![Fig7](Fig7.png)
 
 ***
-# Heatmap of CNV-curves and detecting rare subclones
+# Heatmap of sciCNV profiles of cells
 
-To see the final result of iCNV-analysis, we sketch all CNV-curves together and try to 
-segregate diverse subclones based on their CNV-similarities.
+The results of sciCNV profiling of multiple cells can be reviewed in a heatmap. The _heatmap3_ function 
+is utilized. Single cell sciCNV values (colour-scale) for mutliple cells (y axis) are plotted either by: 
+1) genomic rank-order of genes from which the CVS are derived (using _CNV_htmp_glist_ function) or by
+2) the physical genomic location of the genes (manipulating  _CNV_htmp_gloc_ function).
+
+Option 1 has the advantage that the heatmap provides an image in which pixels map directly to the underlying (gene) data density; regions with few genes are under-represented (drawn as short stretches) while regions with many genes are over-represented (long stretches). Option 2 stretches (interpolates) and/or condenses the sciCNV profiles to map onto a physical genome, and thus provides a CNV picture that more closely resembles the physical chromatin structure. 
 
 ```
 CNV.mat <- t( M_NF[, -ncol(M_NF)])   
 rownames(CNV.mat) <- colnames(M_NF[, -ncol(M_NF)])
 colnames(CNV.mat) <- rownames(CNV.data)
 ```
-## Generating heatmap
 
-Here, we introduce another function which generates heatmap using _heatmap3_ function 
-against either 
-1) list of genes (using _CNV_htmp_glist_ function) or 
-2) genomic locations (manipulating  _CNV_htmp_gloc_ function).
 
 ```
 ## against list of genes
@@ -531,28 +477,7 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
 ```
 
 ![Fig9](Fig9.png)
-## Detecting rare subclones
+## Detecting subclones
 
-CNV-similarities can separate cells in a different way than clustering them based 
-on gene expressions. One may use iCNV curves to cluster cells based on their copy number 
-alteration similarities as has been described in the paper and shown in the following figure. This can tend to a completely 
-different results than what is observed from clustering based on transcription levels. 
-For more details, please see our paper. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+CNV profiles can be used to separate cells into subclones, as shown in the figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
 
