@@ -319,7 +319,7 @@ to the calculation cost required to generate sciCNV-curves for each cell_.
 CNV.data.scaled <- Scaling_CNV( CNV.data, n.TestCells = No.test, scaling.factor = 0.4)
 M_NF <- CNV.data.scaled
 ```
-![Fig5](Fig5.png)
+![Fig6](Fig6.png)
 
 (4) As single cell CNV should be integers, preliminary sciCNV values falling below a noise threshold (0.4 or a user-specified threshold) were set to zero. We define M_NF as the noise-free data matrix, which is attached to the average expression of test cells.
 
@@ -381,7 +381,7 @@ rownames(M_NF3) <- as.matrix(M_NF2[ , 1] )
 Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
 ```
 
-![Fig6](Fig6.png)
+![Fig7](Fig7.png)
 
 ***
 # Tumor clone CNV scores
@@ -428,7 +428,7 @@ for(i in 1:length(mylevels)){
 }
 ```
 
-![Fig7](Fig7.png)
+![Fig8](Fig8.png)
 
 ***
 # Heatmap of sciCNV profiles of cells
