@@ -210,7 +210,7 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
        legend=paste("Mean of 95% commonly expressed genes")) 
 ```
 
-![Fig2](Fig2_1.png)
+![Fig2](Fig2.png)
 
 
 ### The average expression of housekeeping genes
@@ -228,7 +228,7 @@ points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
 legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of houskeeping gene expressions"))
 ```
 
-#![Fig3](Fig2_2.png)
+#![Fig3](Fig3.png)
 
 
 ***
@@ -275,7 +275,7 @@ DimPlot(MSC, reduction = "umap",
              label.size = 4)                        
 ```
 
-![Fig3](Fig3.png)
+![Fig4](Fig4.png)
 
 ***
 # Single cell inferred CNV (sciCNV) analysis from scRNA-seq data
@@ -308,7 +308,7 @@ CNV.data <- sciCNV(norm.mat = norm.data,
 **Note:** _For larger datasets we recommend running this part of the algorithm on cluster (i.e. run a .bash) due 
 to the calculation cost required to generate sciCNV-curves for each cell_.
 
-![Fig4](Fig4.png)
+![Fig5](Fig5.png)
 
 
 
@@ -481,3 +481,4 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
 
 CNV profiles can be used to separate cells into subclones, as shown in the figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
 
+![Fig10](Fig10.png)
