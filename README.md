@@ -20,7 +20,7 @@ Chromosome copy number variations (CNVs) are a near-universal feature of cancer 
 
 ## Introduction
 
-## 1.RTAM Normalization
+## 1. RTAM Normalization
 Single-cell RNA-seq enables gene expression comparisons between cells. However, the accuracy of such comparisons depends critically upon data normalization. As the best methods for normalizing single-cell transcriptomes remain controversial we developed RTAM-1 and -2. The RTAM normalization approach originates from a consideration of the strengths and weaknesses of scRNA-seq. Whereas lowly expressed genes are detected within single cells with low resolution (due to integer transcript counts) and show significant stochastic variation, highly expressed genes are robustly detected and show finer quantisation of variation relative to intensity. RTAM thus utilizes highly-expressed genes, whose expression is resolved with greater accuracy, to align cellular transcriptomes. Genes are ranked by expression in each cell and the summed intensities of the top-ranked genes is standardized in log-space using cell-specific non-linear differential adjustments of gene expression determined either by gene expression rank (RTAM1) or by gene expression intensity (RTAM2). The rationale and derivation of the underlying mathematics is described in the supplemental data file associated with the reference manuscript.
 
 ## 2. sciCNV
