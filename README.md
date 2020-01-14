@@ -460,7 +460,7 @@ CNV_htmp_glist( CNV.mat2 = CNV.matrix,
                 break.glist = break.glist,
                 No.test = No.test )
 ```
-![Fig8](Fig8.png)
+
 ```
 
 ## against actual hgenomic locations
@@ -477,8 +477,9 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
 ```
 
 ![Fig9](Fig9.png)
+
 ## Detecting subclones
 
-CNV profiles can be used to separate cells into subclones, as shown in the figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
+CNV profiles can be used to separate cells into subclones, as shown in below figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
 
 ![Fig10](Fig10.png)
