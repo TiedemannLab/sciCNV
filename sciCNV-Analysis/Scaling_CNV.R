@@ -45,8 +45,25 @@ Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
     Ave_control[is.na(Ave_control)] <- 0
     Ave_test[is.na(Ave_test)] <- 0
   
+    ##
     
-  
+    Gen.Loc <- read.table( "../Our_Final_codes/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep='\t', header=TRUE)
+    Specific_genes <- which( as.matrix(Gen.Loc)[, 1]   %in% rownames(V7Alt))
+    M_sample <-  Gen.Loc[Specific_genes, ]
+    
+    Chr_end <- matrix(0, ncol=24, nrow=1)
+    Chr_begin <- matrix(0, ncol=24, nrow=1)
+    
+    for(l in 1:22){
+      Chr_begin[1,l] <- min(which(M_sample [,2]==l))
+      Chr_end[1,l] <- max(which(M_sample [,2]==l))
+    }
+    Chr_begin[1,23] <- min(which(M_sample [,2]=="X"))
+    Chr_end[1,23] <- max(which(M_sample [,2]=="X"))
+    ##
+    Chr_begin[1,24] <- min(which(M_sample [,2]=="Y"))
+    Chr_end[1,24] <- max(which(M_sample [,2]=="Y"))
+    
   ## To scale data we used some genes that are correlated to specific number of CNV
   plot.new()
   par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
@@ -62,13 +79,18 @@ Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
   )
   points(Ave_test[, 1], col= "red", pch=16, cex=0.5 )
   abline(h=0, col="black")
-
+  abline(h=c(-scaling.factor, scaling.factor), lty=1, col="orange")
+  
   legend("bottomleft",
          legend=c( "Ave control","Ave test"), 
          inset=.02, col=c("blue","red"), 
          fill=c("blue", "red"), 
          horiz=TRUE, 
          cex=1.2)
+  
+  abline(v=c(Chr_begin,Chr_end), col="gray65", type="l", lty=2)
+  points(Chr_begin+100, matrix(c(  1.8, 1.7 ),ncol=24, nrow=1), pch=16, col="royalblue1", cex=4)
+  text(Chr_begin+100, matrix(c(  1.8, 1.7 ),ncol=24, nrow=1), c(seq(1,22,1),"X","Y"),col="white", cex=1.2)
   
   title(paste("Average iCNV curves of test/control cells - Threshold=",
               round(scaling.factor, 
