@@ -9,9 +9,9 @@
 #######################################################################################
 
 # Please see the reference and supplemental materials described in the README for additional information.
-
+#
 # M_NF: is a matrix of sciCNV profiles, with an extra column that reflects the average 
-#          sciCNV profile of all suspected tumor cells (test cells)
+#       sciCNV profile of all suspected tumor cells (test cells)
 
 CNV_score <-  function( M_nf ){
   
