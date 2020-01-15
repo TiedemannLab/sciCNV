@@ -9,14 +9,14 @@
 
 
 # Please refer to the reference and supplemental materials described in the README for additional details.
-
+#
 # principal variables:
 # clustering: TRUE/FALSE variable specifying whether to cluster cells based on their CNV similarities. Default is "FALSE"
 # clustering.type: Variable specifying the clustering method to be used in generating the heatmap. Possible options are "pearson", 
 #        "euclidean", " spearman", ... "original" (retains the original cell order without unsupervised clustering).
 #         Default is "pearson". Only enabled when clustering = "TRUE"
 # sorting: TRUE/FALSE variable specifying whether to sort cells based on their tumor CNV score from the largest to smallest tumor scores. Default is FALSE.
-
+#
 # Definitions:
 # CNV.mat2: copy number variation matrix 
 # Gen.Loc: Genomic Location matrix with list of genes, their associated chromosome numbers, start and end locations
