@@ -1,9 +1,9 @@
 
 
 #######################################################################################
-######                             Scaling_CNV function                         ####### 
-######                 To scale CNV-curves derived for ssRNA-seq data           #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+######                             Scaling_sciCNV function                      ####### 
+######      To scale preliminary sciCNV-curves derived from scRNA-seq data      #######
+######  Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto  #######
 ######                        copyright@AliMahdipourShirayeh                    #######
 #######################################################################################
 
@@ -24,10 +24,10 @@ Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
   
   Ave_control <- matrix(0, ncol=1, nrow= nrow(V7Alt ))
   Ave_test <- matrix(0, ncol=1, nrow= nrow(V7Alt ))
-  Z2 <- seq( n.TestCells + 1, ncol(V7Alt), 1)   #NPCs
-  Z3 <- seq(1, n.TestCells , 1)     #MMPCs
+  Z2 <- seq( n.TestCells + 1, ncol(V7Alt), 1)   #Normal cells
+  Z3 <- seq(1, n.TestCells , 1)     #tumor/test cells
   
-  ###### Sample 3 -choosing ONLY PCs and NBCs/NPCs (205 cells)
+ ##
   for(i in 1:nrow(V7Alt)){
     if( !sum(V7Alt[ i, Z2]) == 0 ){
       Ave_control[i, 1] <- mean(as.matrix(V7Alt[ i, Z2][which(!V7Alt[ i, Z2] == 0 ) ]))
@@ -75,7 +75,7 @@ Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
        cex.lab=2,
        cex.axis=2, 
        xlab="Genomic location",
-       ylab="CNV-expression"
+       ylab="Preliminary CNV estimate"
   )
   points(Ave_test[, 1], col= "red", pch=16, cex=0.5 )
   abline(h=0, col="black")
@@ -92,7 +92,7 @@ Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
   points(Chr_begin+100, matrix(c(  1.8, 1.7 ),ncol=24, nrow=1), pch=16, col="royalblue1", cex=4)
   text(Chr_begin+100, matrix(c(  1.8, 1.7 ),ncol=24, nrow=1), c(seq(1,22,1),"X","Y"),col="white", cex=1.2)
   
-  title(paste("Average iCNV curves of test/control cells - Threshold=",
+  title(paste("Average pre-sciCNV profile of test/control cells - Threshold=",
               round(scaling.factor, 
               digits=2)), 
               col.main="brown", 
@@ -101,10 +101,14 @@ Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
   Final_Mat <- cbind(V7Alt, Ave_test)
   rownames(Final_Mat) <- rownames(V7Alt)
   colnames(Final_Mat) <- c(colnames(V7Alt),c("AveTest"))
-  #### this function returnes the scaled CNV-matrix
+  
+  ## this function returnes the scaled CNV-matrix
   return( Final_Mat )
   
   
   
 }
+
+
+
 
