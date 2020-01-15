@@ -2,29 +2,33 @@
 
 #######################################################################################
 ######                           CNV_htmp_gloc function                         ####### 
-######               Heatmap of CNV-curves:against Genomic location (gloc)      #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+###### Generates heatmap of sciCNV profiles, plotted by Genomic location (gloc) #######
+######  Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
+
+# Please refer to the reference and supplemental materials described in the README for additional details.
+
+# principal variables:
+# clustering: TRUE/FALSE variable specifying whether to cluster cells based on their CNV similarities. Default is "FALSE"
+# clustering.type: Variable specifying the clustering method to be used in generating the heatmap. Possible options are "pearson", 
+#        "euclidean", " spearman", ... "original" (retains the original cell order without unsupervised clustering).
+#         Default is "pearson". Only enabled when clustering = "TRUE"
+# sorting: TRUE/FALSE variable specifying whether to sort cells based on their tumor CNV score from the largest to smallest tumor scores. Default is FALSE.
+
+# Definitions:
 # CNV.mat2: copy number variation matrix 
-# # Gen.Loc: Genomic Location matrix with list of genes, their associated chromosome numbers, starts and ends
-# clustering: to cluster or not the cells based on their CNV similarities. Default is "FALSE"
-# clustering.type: the selected method will be considered to generate heatmap. Possible options are "pearson", 
-#        "euclidean", " spearman", ... "original" stands for keeping the same clusters as original without using any unsupervised clustering.
-#         Defualt is "pearson" clustering method. Only when supervised = "TRUE"
-# sorting: TRUE for sorting cells based on their tumor score from the largest to smallest tumor scores. Default is FASLE.
-# CNVscore: is the total score matrix of all cells (possibly ranked separately for each cluster). Can be only used when sorting.clusters = TRUE.
-# cluster.lines: is a list of values which separate different clusters accross entire population, onlys used if there
-#        exist several clusters other than just test and control populations
+# Gen.Loc: Genomic Location matrix with list of genes, their associated chromosome numbers, start and end locations
+# CNVscore: is the tumor CNV score matrix for all cells (possibly ranked within clusters). Only used when sorting.clusters = TRUE.
+# cluster.lines: is a list of values which can be used to separate cell clusters within the population; only used if multiple clusters present
 # break.gloc: is a set of values each defines a vertical line that separates chromosomes
-# No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
-#       of test annd control cells in the heatmap
+# No.test: number of test cells included in the data; can be used to delineate the populations of test and control cells in the heatmap
+
 
 CNV_htmp_gloc <- function(CNV.mat2,
-                          Gen.Loc,
                           clustering = FALSE,        # TRUE or FALSE option 
-                          clustering.type = c("pearson", "kendall", "spearman"),   # "pearson", "kendalln", "spearman", defualt: "pearson"
+                          clustering.type = c("pearson", "kendall", "spearman"),   # "pearson", "kendalln", "spearman", default: "pearson"
                           sorting = TRUE,            # TRUE or FALSE
                           CNVscore = NULL,                # Only exists when sorting = TRUE 
                           cluster.lines = NULL,   
@@ -71,7 +75,7 @@ CNV_htmp_gloc <- function(CNV.mat2,
   
   
   
-  ##### sorting cells within each cluster based on CNV-scores from the largest to the smallest (if applicable)
+  ##### sorting of cells within clusters, based on tumor CNV scores, from the largest to the smallest (if applicable)
   
   if ( sorting == TRUE ){
     tst.score <- sort(CNVscore[1, 1:No.test] , decreasing=TRUE)     #MMPCs
@@ -360,7 +364,6 @@ CNV_htmp_gloc <- function(CNV.mat2,
              Rowv = FALSE, 
              Colv = FALSE, 
              trace ="none", 
-             #treeheight_row = 0.2,
              sepwidth = c(0.2,0.2),
              sepcolor = "black",
              scale = "none",  
@@ -368,7 +371,6 @@ CNV_htmp_gloc <- function(CNV.mat2,
              labCol = labels.call.gloc,
              cexCol = 1,
              srtCol = 90,
-             #cutree_rows = 2, 
              hieght = 50, 
              width = 400, 
              legend = TRUE, 
