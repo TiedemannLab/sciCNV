@@ -1,8 +1,9 @@
 
+
 #######################################################################################
 ######                             Vignette of CNV pipeline                     ####### 
 ###### ((  RTAM1/2- normalization, sciCNV analysis, CNV-subclonal analysis  ))  #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+######  Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
@@ -28,7 +29,7 @@ library(umap)
 source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
 
 ##
-path.code <- "./sciCNV-Analysis"
+path.code <- "./sciCNV-Analysis/"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
 source(file.path(path.code, "sciCNV.R"))
@@ -55,11 +56,13 @@ No.test <- ncol(raw.data2) #100                     # Number of test cells
 No.control <- ncol(raw.data2)-No.test# Number of control cells
 Col_Sum <- t(as.numeric(colSums(raw.data2)))
 
-##################################################
-# Quality Control (QC): Eliminating damahged cells 
-##################################################
+####################################################
+# Quality Control (QC): Elimination of damaged cells 
+####################################################
 
-## Reading UMI and mitochondrial gene expressions associated to the data
+## Calculation of total transcript count per cell, idnetified by unique molecular identifiers (UMI)
+## Calcuation of mitochondrial transcript content per cell
+
 nUMI <- t(as.numeric(colSums(raw.data2)))
 colnames(nUMI) <- colnames(raw.data2)
 
@@ -74,9 +77,9 @@ nGene1 <- lapply( 1:ncol(raw.data2), function(i){ nonzero(raw.data2[, i])} )
 nGene1 <- t(as.numeric(nGene1))
 colnames(nGene1) <- colnames(raw.data2)
 
-#--------------------------------------------
-# Damaged Cells Removal in Entire Population 
-#--------------------------------------------
+#---------------------------------
+# Identification of Damaged Cells
+#---------------------------------
 MMS <- CreateSeuratObject(counts = raw.data2, project = "Sample1")
 damaged_cells <- Mito_umi_gn(mat = MMS, 
                              percent.mito.G = percent.mito.G,
@@ -85,9 +88,9 @@ damaged_cells <- Mito_umi_gn(mat = MMS,
                              No.test = No.test,
                              drop.mads = 3)
 
-#----------------------------
-##  Excluding Damaged Cells
-#----------------------------
+#------------------------------
+##  Exclusion of Damaged Cells
+#------------------------------
 if( length(damaged_cells) > 0 ){
   Outliers <- damaged_cells
   raw.data <- raw.data2[, - Outliers]
@@ -101,9 +104,9 @@ raw.data <- as.matrix(raw.data )
 rownames(raw.data) <- raw.data1[ , 1]
 colnames(nUMI) <- colnames(raw.data)
 
-#--------------------------------------------------
-##  Sorting based on UMI (from largest to smallest)
-#--------------------------------------------------
+#----------------------------------------------------
+##  Sorting of cells by UMI (from largest to smallest)
+#----------------------------------------------------
 if(No.control > 0){
 raw.data <- raw.data2[, c(colnames(sort(as.data.frame(nUMI)[1:No.test], decreasing=TRUE))
                           ,colnames(sort(as.data.frame(nUMI)[(No.test+1):ncol(raw.data)], decreasing=TRUE))
@@ -131,8 +134,7 @@ write.table(norm.data,
             col.names = TRUE)
 
 
-
-## Sketching non-zero expressions
+## plotting the normalized expression values of detected genes (y-axis) by cell (X-axis)
 
 graphics.off()
 plot.new()
@@ -156,7 +158,7 @@ for(i in 2:ncol(norm.data)){
 title( paste("Sample1, RTAM2-normalization, cutoff ", 250," nGene ",250,sep=""), 
        col.main = "brown", cex.main = 2)
 
-#---- 95% commonly expressed genes
+#---- plotting the average expression of commonly expressed genes (expressed by >95% cells) for each cell
 Sqnce <- seq(1,ncol(norm.data),1)
 Common.mat <-   as.matrix(norm.data[which(rowSums(norm.data[,Sqnce ] != 0) > 0.95*ncol(norm.data) ), ] )
 
@@ -171,14 +173,16 @@ for(j in 1:ncol(norm.data)){
 } 
 legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5, legend=paste("Mean of 95% commonly expressed genes"))
 
-#---- Average expression of housekeeping genes
+#---- plotting the average expression of housekeeping genes
 Houskeeping_gene_list <- read.table( "./Dataset/HouseKeepingGenes.txt", sep = '\t',header = TRUE)
 HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
-for(k in 1:ncol(HK_mat)){
-  Mean_HK_mat[1, k] <- as.numeric(mean(HK_mat[,k][HK_mat[,k]>0]))
-  }
+colnames(HK_mat) <- colnames(norm.data)
 
+Mean_HK_mat <- matrix(0, ncol = ncol(norm.data) , nrow = 1)
+for(k in 1: (ncol(norm.data))){
+  Mean_HK_mat[1,k] <- as.numeric(mean(HK_mat[,k][HK_mat[,k]>0]) )
+}
 par( new=TRUE)
 points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
 legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of Houskeeping gene expressions"))
@@ -190,8 +194,6 @@ train1 <- as.matrix(norm.data)
 colnames(train1) <- colnames(norm.data)
 train <- as.matrix(train1[which(rowSums(train1 != 0) >= 1  ), ] )
 
-nUMI <- as.matrix(nUMI[1 , colnames(train)])
-nGene <- as.matrix(nGene[1 , colnames(train)])
 #---------------------------------
 ##  clustering the normalized data
 #---------------------------------
@@ -211,9 +213,9 @@ DimPlot(object = MSC,reduction = "tsne", pt.size = 3, label = TRUE, label.size =
 MSC <- RunUMAP(MSC, dims = 1:10)
 DimPlot(MSC, reduction = "umap", pt.size = 3, label = TRUE, label.size = 4)
 
-#---------------------------------------------------------
-##  Running sciCNV function to derive CNV-curves per cell
-#---------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------
+##  Running the sciCNV function to derive CNV profiles for single cells from RTAM-normalized scRNA-seq data
+#-----------------------------------------------------------------------------------------------------------
 tst.index  <- seq(1, No.test , 1)                      # No of test cells
 ctrl.index <- seq(No.test+1, ncol(norm.data), 1)      # No of controcl cells
 
@@ -224,9 +226,9 @@ CNV.data <- sciCNV(norm.mat = norm.data,
                    baseline_adj  = FALSE,  
                    baseline = 0)
 
-#--------------------------------------------------------------
-##  Scaling and Filtering noise of the iCNV curves
-#--------------------------------------------------------------
+#------------------------------------------------------------------
+##  Scaling the sciCNV curves and setting a noise filter threshold
+#------------------------------------------------------------------
 
 ## Scaling CNV-curves to adjust one copy number gain/losses to height +1/-1 if applicable
 CNV.data.scaled <- Scaling_CNV(V7Alt = CNV.data, 
@@ -267,15 +269,15 @@ for(w in 1:ncol(M_NF)){
 rownames(M_NF) <- rownames(CNV.data.scaled)
 colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))], "AveTest")
 
-## Assigning chromosome number to each gene sorted based on chromosme number, 
-## starts and ends to sketch the average iCNV curve of test cells
+## Assigning chromosome number to each gene sorted based on chromosome number, 
+## starts and ends to sketch the average sciCNV curve of test cells
 
 Gen.loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
 Specific_genes <- which( Gen.loc[, 1] %in% rownames(CNV.data.scaled))
 Assoc.Chr <-  Gen.loc[Specific_genes, 2]
 #Assoc.Chr <-  apply(Assoc.Chr, 2, as.numeric)
 
-#### Finalizing the iCNV-matrix by attaching gene-name and chromosome number lists
+#### Finalizing the sciCNV-matrix by attaching gene-name and chromosome number lists
 M_NF1 <- cbind(as.matrix(Gen.loc[Specific_genes, 1]), 
                as.matrix(Gen.loc[Specific_genes, 2]), 
                M_NF)
@@ -289,9 +291,9 @@ rownames(M_NF3) <- as.matrix(M_NF2[ , 1] )
 Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)] )
 
 #---------------------------------------------------------
-#--------------------------------------------------------------
-##  Calculating tumor CNV score for test and control cells
-#--------------------------------------------------------------
+#------------------------------------------------------------------
+##  Calculating tumor CNV scores to segregate normal vs tumor cells
+#------------------------------------------------------------------
 TotScore <- CNV_score( M_nf = M_NF )
 
 ## sketching tumor scores for all cells showing segregation of test/control tumor scores
@@ -328,7 +330,7 @@ for(i in 1:length(mylevels)){
 }
 
 #--------------------------------------------------------------
-##  Heatmap of CNV-curves and detecting rare subclones
+##  Heatmap of sciCNV profiles and detection of subclones
 #--------------------------------------------------------------
 CNV.matrix <- t( M_NF[, -ncol(M_NF)])   
 rownames(CNV.matrix) <- colnames(M_NF[, -ncol(M_NF)])
@@ -338,25 +340,23 @@ colnames(CNV.matrix) <- rownames(CNV.data)
 ## In order to use genomic locations in our heatmap we read Gen.Loc matrix 
 ## with list of genes, chromosome numbers, starts and ends:
 
-## Heatmap against list of genes
+## Heatmap of sciCNV plotted by gene (x-axis), listed in rank order of genomic location
 
 break.glist <- rep(0, 24)
 break.glist <- heatmap_break_glist(CNV.mat2 = CNV.matrix )
 
 CNV_htmp_glist( CNV.mat2 = CNV.matrix,
-                Gen.Loc = Gen.Loc,
                 clustering = FALSE,        
                 sorting = TRUE,        
                 CNVscore = TotScore,
                 break.glist = break.glist,
                 No.test = No.test )
 
-## Heatmap against genomic location
+## Heatmap of sciCNV plotted by genomic location
 break.gloc <- rep(0, 24)
 break.gloc <- heatmap_break_gloc()
 
 CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
-               Gen.Loc = Gen.Loc,
                clustering = FALSE,
                sorting = TRUE,        
                CNVscore = TotScore,
@@ -364,7 +364,15 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                No.test = No.test )
 
 
-# CNV.mat2 = CNV.matrix; clustering = FALSE; sorting = TRUE; CNVscore = TotScore; cluster.lines = NULL
+
+
+
+
+
+
+
+
+
 
 
 
