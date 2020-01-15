@@ -2,13 +2,16 @@
 
 #######################################################################################
 ######                              CNV_score function                          ####### 
-######             ((  Assigning tumor/test likness score to single cells  ))   #######
+###### Calculates a score for each cell reflecting the similarity of its sciCNV #######
+######      profile to the mean CNV profile of all suspected tumor cells        #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
-# M_NF: is the matrix of icNV curves among with an extra column of average of 
-#          iCNV-curve of all test cells
+# Please see the reference and supplemental materials described in the README for additional information.
+
+# M_NF: is a matrix of sciCNV profiles, with an extra column that reflects the average 
+#          sciCNV profile of all suspected tumor cells (test cells)
 
 CNV_score <-  function( M_nf ){
   
@@ -61,3 +64,12 @@ CNV_score <-  function( M_nf ){
   return( TotScore )
   
 }
+
+  
+  
+  
+  
+  
+  
+  
+  
