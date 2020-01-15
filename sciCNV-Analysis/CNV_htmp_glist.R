@@ -2,33 +2,33 @@
 
 #######################################################################################
 ######                          CNV_htmp_glist function                         ####### 
-######                   Heatmap of CNV-curves: against gene list (gnlist)      #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+######   Generates a heatmap of single cell CNV profiles plotted by gene list   #######
+######  Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
+# Definitions:
 # CNV.mat2: copy number variation matrix 
 # Gen.Loc: Genomic Location matrix with list of genes, their associated chromosome numbers, starts and ends
-# clustering: to cluster or not the cells based on their CNV similarities. Default is "FALSE"
-# clustering.type: the selected method will be considered to generate heatmap. Possible options are "pearson", 
-#        "euclidean", " spearman", ... "original" stands for keeping the same clusters as original without using any unsupervised clustering.
-#         Defualt is "pearson" clustering method. Only when supervised = "TRUE"
-# sorting: TRUE for sorting cells based on their tumor score from the largest to smallest tumor scores. Default is FASLE.
-# CNVscore: is the total score matrix of all cells (possibly ranked separately for each cluster). Can be only used when sorting.clusters = TRUE.
-# cluster.lines: is a list of values which separate different clusters accross entire population, onlys used if there
-#        exist several clusters other than just test and control populations
+# clustering: a TRUE/FALSE variable specifying whether to cluster cells based on their CNV similarities. Default is "FALSE"
+# clustering.type: variable specifying the method that will be used to cluster sciCNV profiles (cells), if enabled. Possible options are "pearson", 
+#        "euclidean", " spearman", ... "original" (retain the same cell order/clusters as original without further clustering).
+#         Default is "pearson". However this is only enabled when clustering = "TRUE"
+# sorting: a TRUE/FALSE variable that enables sorting of cells based on their tumor CNV score from the largest to smallest tumor scores. Default is FASLE.
+# CNVscore: the CNV score matrix for all cells (optionally divided by pre-determined clusters). Used only when sorting.clusters = TRUE.
+# cluster.lines: is an optional list of values demarcating clusters of cells within the population; only used if multiple
+#        cell clusters exist beyond the simple division between test and control populations
 # break.glist: is a set of values each defines a vertical line that separates chromosomes
-# No.test: number of test cells included in the data, potentially is used for separating diverse populations of 
+# No.test: the number of test cells included in the data; can be used to delineate distinct populations of 
 #       of test annd control cells in the heatmap
 
 CNV_htmp_glist <- function(CNV.mat2,
-                           Gen.Loc,
-                           clustering = FALSE,            # TRUE or FALSE option 
+                           clustering = FALSE,            # TRUE or FALSE 
                            clustering.type = c("pearson", "kendall", "spearman"),   # "pearson", "kendalln", " spearman", defualt: "pearson"
                            sorting = FALSE,               # TRUE or FALSE
-                           CNVscore = NULL,               # Only exists when sorting = TRUE 
+                           CNVscore = NULL,               # Only used when sorting = TRUE 
                            cluster.lines = NULL, 
-                           break.glist = break.glist,     # Needs to be defined as separation lines for chromosomes       
+                           break.glist = break.glist,     # separation lines for chromosomes       
                            No.test ){
   
   
@@ -69,7 +69,7 @@ CNV_htmp_glist <- function(CNV.mat2,
     break.glist <- c(0, ncol(CNV.mat2))
   }
   
-  ##### sorting cells within each cluster based on CNV-scores from the largest to the smallest (if applicable)
+  ##### sorting of cells within each cluster by CNV-score, from the largest to the smallest (if applicable)
   
   if ( sorting == TRUE ){
     tst.score <- sort(CNVscore[1, 1:No.test] , decreasing=TRUE)     #MMPCs
@@ -108,7 +108,7 @@ CNV_htmp_glist <- function(CNV.mat2,
   ROWlist <- rownames(CNV.mat1)
   COLlist <- colnames(CNV.mat1)
   
-  ## expanding expressions towrds 0 or 1 providing their expression is less than or bigger to 0.5
+  ## converging single cell copy number values towards integers
   LL1 <- 0.5
   LL2 <- 1.5
   LL3 <- 2.5
@@ -138,9 +138,9 @@ CNV_htmp_glist <- function(CNV.mat2,
   CNV.mat <- as.matrix(CNV.mat1)
   rownames(CNV.mat) <- matrix(NA, ncol=1, nrow=nrow(CNV.mat1))
   
-  ##############################################
-  ## Heatmap of CNV-curves against list of genes
-  ##############################################
+  ##################################################
+  ## Heatmap of sciCNV profiles plotted by gene list
+  ##################################################
   
   ## Using k-nearest neighbors (kNN)-method
   CNV.mat31 <- as.matrix(CNV.mat)
@@ -167,7 +167,7 @@ CNV_htmp_glist <- function(CNV.mat2,
   
   CNV.mat3 <- as.matrix(CNV.mat3)
   
-  ## Assignning location of genes on the genome
+  ## Assigning x-axis location to gene-centered data based on genomic location rank
   
   label.glist <- t(as.matrix(c(paste("Chr", 1:22, sep = ""),"ChrX", "ChrY")))
   label.call.glist <- rep(NA, ncol(CNV.mat2))
@@ -206,7 +206,6 @@ CNV_htmp_glist <- function(CNV.mat2,
              Rowv = FALSE, 
              Colv = FALSE, 
              trace ="none", 
-             #treeheight_row = 0.2,
              sepwidth = c(0.2,0.2),
              sepcolor = "black",
              scale = "none",  
