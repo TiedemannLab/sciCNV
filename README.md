@@ -322,7 +322,8 @@ M_NF <- CNV.data.scaled
 (4) As single cell CNV should be integers, preliminary sciCNV values falling below a noise threshold (0.4 or a user-specified threshold) were set to zero. We define M_NF as the noise-free data matrix, which is attached to the average expression of test cells.
 
 ```
-noise.thr = 0.4   # Noise threshold
+# Noise threshold
+noise.thr = 0.4   
 for(w in 1:ncol(M_NF) ){
   for(j in 1:nrow(M_NF)){
     if( (M_NF[j,w] > -noise.thr) && (M_NF[j,w] < noise.thr)  ){
