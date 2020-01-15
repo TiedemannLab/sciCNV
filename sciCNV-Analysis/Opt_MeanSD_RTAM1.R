@@ -1,11 +1,11 @@
 
 
-#######################################################################################
-######                      Optimizing Function in RTAM1                        ####### 
-######  ((  To detect the optimal number of top expressed genes for scaling ))  #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
-######                       copyright@AliMahdipourShirayeh                     #######
-#######################################################################################
+##########################################################################################
+######                        Optimizing Function in RTAM1                         ####### 
+###### (Detects the optimal number of top-expressed genes for scaling a data-set)  #######
+######   Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto    #######
+######                       copyright@AliMahdipourShirayeh                        #######
+##########################################################################################
 
 Opt_MeanSD_RTAM1 <- function(Normalized_log, Order_Matrix, nGene, Min_nGene, gene_cutoff){    
   
@@ -33,7 +33,7 @@ Opt_MeanSD_RTAM1 <- function(Normalized_log, Order_Matrix, nGene, Min_nGene, gen
   colnames(AA)<- colnames(general1)
   
   # ----------------------------------------------------------------
-  # Step 2: RTAM1 main step with modifying per cell expressions
+  # Step 2: RTAM1 main step, adjusting cellular gene expression
   # ----------------------------------------------------------------
   
 
