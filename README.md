@@ -182,7 +182,7 @@ title( paste("Sample1, RTAM2-normalization, cutoff ", 250," nGene ",250,sep=""),
 To assess the alignment of the normalized cellular transcriptomes, the mean or median expression in each cell of large sets of uniquitous genes is examined, including: 
 
 (1) a curated set of housekeeping genes (HKG), or 
-(2) the set of all commonly-expressed genes (detected in >95% of the cells studied)
+(2) the set of all commonly-expressed genes (detected in > 95% of the cells studied)
 
 Whilst the expression of any individual gene is expected to vary between cells for both biological and technical reasons, the average expression per cell of a large set of ubiquitous genes should be similar, particularly amongst cells of the same lineage. 
 
@@ -426,7 +426,7 @@ CNV_htmp_glist( CNV.mat2 = CNV.matrix,
 
 ```
 
-## against actual hgenomic locations
+## against genomic locations
 break.gloc <- rep(0, 24)
 break.gloc <- heatmap_break_gloc()
 
@@ -437,6 +437,8 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                break.gloc = break.gloc,
                No.test = No.test )
 ```
+
+The Heatmap of sciCNV profile is sketched in bellow by applying _Pearson_'s measurment and _ward.D2_ clustering algorithm: 
 
 ![Fig8](Fig8.png)
 
