@@ -2,9 +2,9 @@
 
 #######################################################################################
 ######                             Mito_umi_gn function                         ####### 
-######           To sketch mitochondrial, nUMI and nGene versus each other      #######
-######               to detect damaged individuals within the population        #######
-######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
+###### Function to sketch mitochondrial transcript content, nUMI and nGene data #######
+######      at cellular level to detect damaged cells within the population     #######
+######  Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
@@ -97,5 +97,10 @@ Mito_umi_gn <- function( mat = MMS,
   return(damaged_cells)
   
   
- 
 }
+
+
+
+
+
+
