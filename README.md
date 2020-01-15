@@ -451,7 +451,6 @@ break.glist <- rep(0, 24)
 break.glist <- heatmap_break_glist(CNV.mat2 = CNV.matrix )
 
 CNV_htmp_glist( CNV.mat2 = CNV.matrix,
-                Gen.Loc = Gen.Loc,
                 clustering = FALSE,        
                 sorting = TRUE,        
                 CNVscore = TotScore,
@@ -466,7 +465,6 @@ break.gloc <- rep(0, 24)
 break.gloc <- heatmap_break_gloc()
 
 CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
-               Gen.Loc = Gen.Loc,
                clustering = FALSE,
                sorting = TRUE,        
                CNVscore = TotScore,
