@@ -314,7 +314,7 @@ to the calculation cost required to generate sciCNV-curves for each cell_.
 
 
 ```
-CNV.data.scaled <- Scaling_CNV( CNV.data, n.TestCells = No.test, scaling.factor = 0.4)
+CNV.data.scaled <- Scaling_CNV( CNV.data, n.TestCells = No.test, scaling.factor = 0.7)
 M_NF <- CNV.data.scaled
 ```
 ![Fig6](Fig6.png)
@@ -390,43 +390,8 @@ sciCNV can be used to identify cancer cells, distinguishing these from normal ce
 TotScore <- CNV_score( M_nf = M_NF )
 ```
 
-Tumor CNV scores for single cells are sketched, showing the segregation of normal plasma cells (NPC) and tumor plasma cells by their CNV scores:
+Tumor CNV scores for single cells can be also sketched which shows the segregation of normal plasma cells (NPC) and tumor plasma cells by their CNV scores. Due to frequency of noise in single-cell data, one may calculate CNV score for specific regions across the genome which would highlight segregation better.
 
-```
-TotScoreSort0 <- sort(TotScore[1,1:No.test])
-TotScoreSortNPC <- sort(TotScore[1,(No.test+1):ncol(TotScore)])
-colors <- c( "royalblue1","brown1")
-Labels <- c("NPCs","CLS0")
-names <- as.matrix(c(rep(Labels[1], length(TotScoreSortNPC)), rep(Labels[2],length(TotScoreSort0) )) )
-value <- c(as.matrix(TotScoreSortNPC), as.matrix(TotScoreSort0))
-data=data.frame(names,value)
-data$factor <- factor(data$names, levels=Labels)
-##
-graphics.off()
-plot.new()
-par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
-par(bty="l")
-boxplot(data$value ~ data$factor , col=alpha(colors,0.6),
-        ylim=c(min(TotScore)-1,max(TotScore)+1), 
-        cex.lab = 2, cex.axis = 2, cex.main=2,
-        xlab = "Type of individuals"
-        , ylab = "CNV-score",
-        bty='l', boxcol="gray" ,
-        outpch=16, outcex=1)
-title("CNV-score of individuals", col.main = "brown", cex.main = 2.5)
-##
-mylevels<-levels(data$factor)
-levelProportions<-summary(data$factor)/nrow(data)
-
-for(i in 1:length(mylevels)){
-  thislevel<-mylevels[i]
-  thisvalues<-data[data$factor==thislevel, "value"]
-  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/2)
-  points(myjitter, thisvalues, pch=20, cex=2, xaxt = "n",yaxt = "n",col=alpha(colors[i], 0.6) )  
-}
-```
-
-![Fig8](Fig8.png)
 
 ***
 # Heatmap of sciCNV profiles of cells
@@ -472,10 +437,10 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                No.test = No.test )
 ```
 
-![Fig9](Fig9.png)
+![Fig8](Fig8.png)
 
 ## Detecting subclones
 
 CNV profiles can be used to separate cells into subclones, as shown in below figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
 
-![Fig10](Fig10.png)
+![Fig9](Fig9.png)
