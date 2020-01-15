@@ -2,18 +2,20 @@
 
 #######################################################################################
 ######                             CNV_infer function                           ####### 
-######                 Infered Copy Numver Vatriation for each single cell      #######
+######          for Single Cell Inferred Copy Number Variation (sciCNV)         #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
-# ss.expr: RNA-seq for each test/control cell
-# mean.cntrl: The average expressions of control cells
+# Please see the reference and supplmental materials described in the README file for additional information.
+#
+# Definitions:
+# ss.expr: scRNA-seq based expression for each test/control cell
+# mean.cntrl: The average gene expression of control cells
 # chr.n: List of chromosome numbers associated with the list of genes
 # sharpness: Adjusts the resolution used for the sciCNV-curve calculation. Default =1.0 (range approximately 0.6-1.4).
-# baseline: An optional correction to adjust the baseline CNV zero setpoint (copy number gain =0). 
-#           Default = 0 and the given value for baseline ccorrecction is supposed to be
-#           between -0.5 and 0.5.
+# baseline: An optional correction to adjust the CNV zero setpoint (copy number gain =0) which is otherwise the median CNV of all genes. 
+#           Default = 0 and typical range is between -0.5 and 0.5.
 # baseline_adj: The baseline adjustment is only applied to test cells if it is TRUE. Default is FALSE.
 
 CNV_infer  <- function( ss.expr , 
@@ -45,7 +47,7 @@ CNV_infer  <- function( ss.expr ,
     BLC <- 0
   }
   
-  ## Assigning chromosome number to each gene sorted based on chromosme number, starts and ends 
+  ## Assigning chromosome number to each gene
   gen.Loc <- read.table( "../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
   chr.n <- as.matrix( gen.Loc[which(as.matrix(gen.Loc[,1]) %in% new.genes), 2])
 
@@ -65,7 +67,7 @@ CNV_infer  <- function( ss.expr ,
   Lambda <- 0.00001
   
   
-  ## Generating relative expression vs. negative control
+  ## Generating relative expression vs. control
   FF <- rep(0, nrow(ss.expr))
   AW <- rep(0, nrow(ss.expr))
   BD <- rep(0, nrow(ss.expr))
@@ -104,7 +106,7 @@ CNV_infer  <- function( ss.expr ,
   }
   
   
-  #---------------  T: mov av Control, before weighting & U: mov av test, before weighting
+  #---------------  T: moving average of gene expression in control cells & U: moving average of expression in test cell
   TT <- rep(0, nrow(ss.expr)); U <- rep(0, nrow(ss.expr))
   max_1 <- pmax( as.matrix(AW - P12), matrix(-floor(P12/C297), nrow(ss.expr)) )
   min_1 <- pmin( as.matrix(P12 - BD), matrix(floor(P12/C297), nrow(ss.expr)) )
@@ -118,14 +120,14 @@ CNV_infer  <- function( ss.expr ,
   }
   
   
-  #---------------------- V: ma-Wratio (from Moving Average)
+  #---------------------- V: ma-Wratio (weighted disparity score comparing gene expression in test and control cells within the chromosome segment defined by the moving averages)
   V <- (TT - U)/(TT + U + Lambda )
   
   P100 <- quantile( as.matrix(V)[seq(1,nrow(ss.expr),1)], 0.5 - BLC )
   WW <- V - P100
   
   
-  #---------------  X: mov av test, before weighting. & Y: mov av control, before weighting 
+  #---------------  X: moving average of test cell, before weighting. & Y: moving average of control cells, before weighting 
   X <- rep(0, nrow(ss.expr)); Y <- rep(0, nrow(ss.expr))
   max_2 <- pmax( as.matrix(AW - P12), matrix(-floor(P12/C298), nrow(ss.expr)) )
   min_2 <- pmin( as.matrix(P12 - BD), matrix(floor(P12/C298), nrow(ss.expr)) )
@@ -137,14 +139,15 @@ CNV_infer  <- function( ss.expr ,
     Y[i] <- mean( mean.cntrl[bb] )
   }
   
-  #---------------------- Z ma-Wratio  Moving Ave. +/-  &  AA Median Norm & AB: ma Weight Linirization
+  #---------------------- Z: ma-Wratio (weighted expression disparity score comparing gene expression in test and control cells within the chromosome segment defined by the moving averages) 
+  #-----------------------AA: median normalized Z. AB: Linearized solution of AA from quadratic equation (aka W-lin)
   Z <- (X - Y)/(X + Y + Lambda)
   
   P101 <- median( Z[seq(1,nrow(ss.expr),1) ]) 
   AA <- Z - P101
   AB <- 3.3222*(AA)^4 + 5.6399*(AA)^3 + 4.2189*(AA)^2 + 3.8956*(AA)
   
-  #---------------------- ACC: ma-DMS (on post MovAv post median normalized data)  [AN in new excel file]
+  #---------------------- ACC: ma-DMS ("Demoncratic moving score" [1 CNV vote per gene]- calculated on post moving average post median normalized data)
   
   ACC <- rep(0, nrow(ss.expr))
   
@@ -158,12 +161,12 @@ CNV_infer  <- function( ss.expr ,
       ACC[i] <- ACC[i-1]
   }
   
-  #---------------  NEW: AC: ma-DMS (on post MovAve median) [AO in our excel file]  & DA ma-Wratio  non-Moving Ave. +/-  
+  #---------------  NEW: AC: ma-DMS (on post MovAve median)  &  DA: ma-Wratio  non-Moving Ave. +/-  
   AC <- ACC + ( BLC * G )
   DA <- (ss.expr - mean.cntrl) %/% (ss.expr + mean.cntrl + Lambda)
   
   
-  #---------------------- AC: non-ma DMS   [DD in new excel file V28J4]
+  #---------------------- AC: non-ma DMS
   V56 <- length( DA[ DA > 0 ] )
   V57 <- length( DA[ DA < 0 ] )
   V60 <- (V56-V57)/nrow(ss.expr)
@@ -186,7 +189,7 @@ CNV_infer  <- function( ss.expr ,
   DG <- DE + ( baseline * G)
   DH <- (AC*0.66) + (DG*0.34)
   
-  #---------------------- AD: V7alt[ma- and non-ma] Centrograde : Slope of AC
+  #---------------------- AD: V7alt[ma- and non-ma] Centrograde : Slope of AC (DMS)
   DI <- rep(0, nrow(ss.expr))
   
   
@@ -263,7 +266,7 @@ CNV_infer  <- function( ss.expr ,
   AG <- AF/J311
   
   
-  #### returning the infered CNV-curve matrix
+  #### returns the square of the single cell inferred CNV profile matrix ('squared' estimate of CNV; requires square root)
   
   return(AG)
   
