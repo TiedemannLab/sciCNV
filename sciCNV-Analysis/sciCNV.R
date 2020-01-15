@@ -2,32 +2,33 @@
 
 #######################################################################################
 ######                             sciCNV Method                                ####### 
-######             ((  Merging MA and no-MA with baseline Correction  ))        #######
-######                 Infered Copy Numver Vatriation Producer                  #######
+######   Single Cell Inferred Copy Number Variations, detected from scRNA-seq   #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
-# norm.mat: Matrix of normalized single-cell gene expression (e.g. normalized scRNAseq). Formatted as follows: 
+# Definitions
+# norm.mat: Matrix of normalized single-cell gene expression (e.g. normalized scRNA-seq). Formatted as follows: 
 #       1st column = gene name list. 
-#       1st Row = cell identifier.  Cells arranged with test cells in leftward columns followed by control cells (normal diploid cells) in rightward columns.
+#       1st Row = cell identifier.  
+#       Cells are arranged with test cells in leftward columns, followed by control cells (normal diploid cells of matching lineage) in rightward columns.
 # No.test: number of test cells
-# sharpness: adjusts the resolution used for the sciCNV-curve calculation (by defining a moving window size over which gene expression values are examined). 
+# sharpness: a variable that adjusts the resolution used for the sciCNV-curve calculation (by defining a moving window size over which gene expression values are averaged). 
 #       Default =1.0 (range approximately 0.6-1.4). 
 #       A lower sharpness can be used to offset data sparsity and provide more reliable detection of large CNVs.
-#       A higher sharpness provides more resolution for detection of smaller CNVs but is more susceptible to noise from data sparsity.
-# baseline: An optional correction to adjust the baseline CNV zero setpoint (copy number gain =0) and improve CNV detection when CN gains and losses are substantially unbalanced.
-#       Consider using for hyperdiploid or hyodiploid test cells with multiple trisomies or monosomies where the chromosome number deviates substantially from 46.
-#       Default = 0. Ideal setting: a fraction representing the net genomic change from diploidy (using a positive fraction for gain and a negative fraction for net genomic loss).
+#       A higher sharpness provides more resolution for the detection of smaller CNVs but is more susceptible to noise from data sparsity and thus requires greater data density.
+# baseline: An optional correction to adjust the CNV zero setpoint (copy number gain =0) and improve CNV detection when CN gains and losses are substantially unbalanced.
+#       Consider using for markedly hyperdiploid or hyodiploid cells with multiple trisomies or monosomies where the chromosome number deviates substantially from 46.
+#       Default = 0. Ideal setting: a fraction representing the net fractional genomic change from diploidy (using a positive fraction for gain and a negative fraction for net genomic loss).
 #       If the CNV profile is unknown, run the CNV analysis with default zero setting, review the preliminary CNV profile, and consider re-running with baseline ccorrection.
-# baseline_adj: The baseline adjustment is only applied to test cells if it is TRUE. Default is FALSE. 
+# baseline_adj: The baseline adjustment is only applied to test cells if TRUE is specified. Default is FALSE. 
 
 
 sciCNV <- function(norm.mat, 
                    No.test, 
                    sharpness, 
                    baseline_adj,   # TRUE or FALSE
-                   baseline = 0        # defual is 0. Can be +tive or -tive from [-0.5, 0.5]
+                   baseline = 0    # default is 0. Typical range -0.5 to +0.5.
 ){
   
   source(file.path(path.code, "CNV_infer.R"))
@@ -38,11 +39,11 @@ sciCNV <- function(norm.mat,
   }
   
   if (is.na(sharpness)){
-    sharpness <- 1    # suggested range from '0.6' to '1.4'
+    sharpness <- 1    # typical range 0.6-1.4
   }
   
   if (is.na(baseline_adj)){
-    baseline_adj = FALSE    # suggested range from '0.6' to '1.4'
+    baseline_adj = FALSE    
   }
   
   if ( (baseline_adj == TRUE) & (is.na(baseline)) ){
@@ -67,36 +68,38 @@ sciCNV <- function(norm.mat,
   gen.Loc <-  gen.Loc[Spec.genes, c(1,2)]
   
   
-  ## Selecting genes with expression in at least 2% of cells (this can be changed due to biology/natural features of the test sample)
-  ## and attaching the average expressions of the control samples per gene
+  ## Attaching the average gene expression of the control cells 
+  
   ctrl.index <- seq(No.test+1, ncol(norm.mat), 1)   # index for control cells
   
   ##
-  Ave_NCs <- matrix(0, ncol=1, nrow=nrow(norm.mat))     #the average transcriptions of normal control
+  Ave_NCs <- matrix(0, ncol=1, nrow=nrow(norm.mat))     #the average gene expression of normal control cells
   for(k in 1:nrow(norm.mat)){
     Ave_NCs[k, 1] <- mean(as.numeric(norm.mat[k, ctrl.index]) )
   }
   
   
-  
+ 
   ######
   norm.mat1 <- cbind(gen.Loc, as.matrix(norm.mat), as.matrix(Ave_NCs) )
   rownames(norm.mat1) <- rownames(norm.mat)
   
-  ## Variable that excludes infrequently detected genes, detected below a minimum % of cells (assessed across test and control cells).
-  ##  This enriches the analysis for informative genes.
+  ## Focusing the sciCNV analysis on genes with expression >2% of cells (open to user specification/optimization).
+  ## This enriches the analysis for informative genes.
+  ## The variable excludes infrequently detected genes, that are detected in less than a minimum % of cells (assessed across both test and control cells).
+  
   percent <- 0.02
   MSC1 <- norm.mat1[which(rowSums(norm.mat != 0) >= ncol(norm.mat)*percent ), ] 
   colnames(MSC1) <- c("genes","chromosomes", colnames(norm.mat),"AveNCs") 
   #chr.n <- sort(MSC1[ , 2], decreasing=FALSE)
   MSC <- MSC1[ , -c(1,2)]
   
-  ################################
-  ## infered CNV function
-  ################################
+  #####################################
+  ## single cell inferred CNV function
+  #####################################
   V7Alt <- matrix(0, ncol = (ncol(MSC)-1), nrow = nrow(MSC))
   
-  # Average expression of control cells
+  # Average gene expression of control cells
   mean.cntrl <- as.matrix(as.numeric(MSC[, ncol(MSC)]) ) 
   
   
