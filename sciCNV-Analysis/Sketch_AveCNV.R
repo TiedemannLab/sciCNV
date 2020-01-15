@@ -2,7 +2,7 @@
 
 #######################################################################################
 ######                             Sketch_AveCNV function                       ####### 
-######         Sketching the average test CNV-curve agaisnt genomic location    #######
+######  Plots the average pre-sciCNV profile of test cells by genomic location  #######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                        copyright@AliMahdipourShirayeh                    #######
 #######################################################################################
@@ -26,7 +26,7 @@ Sketch_AveCNV <- function(Ave.mat){
         cex.lab=2, 
         cex.axis=2, 
         xlab="Genomic location", 
-        ylab="CNV-expression")
+        ylab="Preliminary CNV estimate")
   abline(h=0, col="black")
   
   M <- as.matrix(Assoc.Chr) # Chromosome numbers
@@ -61,6 +61,9 @@ Sketch_AveCNV <- function(Ave.mat){
         col = "white", cex = 1.2)
    
   
-  title("Ave iCNV-curve of test bulk relative to normal control", cex.main=2, col.main="brown")
+  title("Average pre-sciCNV profile of test cells relative to control cells", cex.main=2, col.main="brown")
   
 }
+
+
+
