@@ -2,7 +2,7 @@
 
 #######################################################################################
 ######                      Optimizing Function in RTAM2                        ####### 
-######  ((  To detect the optimal number of top expressed genes for scaling ))  #######
+######(Detects the optimal number of top-expressed genes for scaling a data-set)#######
 ######  Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto  #######
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
@@ -30,7 +30,7 @@ Opt_MeanSD_RTAM2 <- function(Normalized_log, Order_Matrix, G_mtrx, nGene, Min_nG
   colnames(AA)<- colnames(Normalized_log)
   
   # ---------------------------------------------------------------------------
-  # Step 2: RTAM2-Linear main step with linearly modifying per cell expressions
+  # Step 2: RTAM2-Lin main step, adjusts cellular gene expression
   # ---------------------------------------------------------------------------
   
   #Asigning G_ij matrix as a ranked matrix of colum-sum normalized data
@@ -126,3 +126,7 @@ Opt_MeanSD_RTAM2 <- function(Normalized_log, Order_Matrix, G_mtrx, nGene, Min_nG
   return(Sd_Aper/Mean_Aper)
   
 }
+
+
+
+
