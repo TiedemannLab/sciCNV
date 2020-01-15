@@ -2,28 +2,32 @@
 
 ##################################################################################################
 ######                           RTAM Nomalization Function                                ####### 
-###### ((New Methods: RTAM1 and RTAM2 to normalize expression data with high efficiency )) #######
-######     Tiedemann Lab - Princess Margaret Cancer centre, University of Toronto          #######
+######                               (for scRNA-seq data)                                  #######
+######     Tiedemann Lab - Princess Margaret Cancer Centre, University of Toronto          #######
 ######                        copyright@AliMahdipourShirayeh                               #######
 ##################################################################################################
 
-# Raw data matrix with  genes as rows and cells as columns
-# number with start and end of genimic locations
-# Order_Matrix is the order of genes in original raw data
-# MinNumGenes to exclude those cells that have poor expressions (250 as minimum No expressed genes)
-# OptNumGenes is the optimized number of genes which minimizes the variance of the output normalzied matrix  
+# Please see the reference and supplemental materials described in the README file.
+
+# The raw data matrix has genes as rows and cells as columns
+# Genes are annotated with their genomic location (start and end locations)
+# Order_Matrix is the original order of genes in the raw data
+# MinNumGenes is a threshold used to exclude poor QC cells that have few detectable genes (default= minimum of 250 genes).
+# OptNumGenes is the number of genes that when employed for RTAM normalization will optimally minimize the variance across cells of gene-set average expression
 
 
-RTAM_normalization <- function(mat,           # Raw data of RNA-seq 
+RTAM_normalization <- function(mat,           # Raw scRNA-seq data 
                                method,        # either RTAM1 or RTAM 2
                                Min_nGn,       # minimum number of genes per cell, below which cells are excluded. 
                                               # Defines the smallest least complex allowable cell. (default = 250 genes per cell)
-                               Optimizing     # True or FALSE options to run optimization part of teh ccode or not
-
-  
+                               Optimizing     # True or FALSE options specify whether to run an optional optimization code
 ){
   
   # argument validations
+  #if( is.na(mat) ){
+  #  stop("Error, the given matrix is not in the accurate format")
+  #}
+  
   if( is.na(method) ){
     method <- c("RTAM2")
     flog.info(sprintf("The considered normalization method is %s",method))
@@ -34,6 +38,11 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     stop( "The chosen normalization method is not valid.")
   }
   
+  #if( (Optimizing=="TRUE") & (! is.na(Nt)) 
+  #    ){
+  #  stop("Error, Nt (the number of top-ranked genes) can be specified only if Optimizing = FALSE")
+  #}
+  
   if( is.na(Optimizing) ){
     Optimizing = "FALSE"
   }
@@ -42,11 +51,15 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     Nt <- Min_nGn
   } 
   
+  #if ( (!is.na(Nt) ) &  ( Nt > Min_nGn ) ){
+  #  stop("Error, Nt is required to be not greater than Min_nGn")
+  #}
+  
   general <- as.matrix(mat) #[ , -1])
   rownames(general) <- rownames(mat) #mat[ , 1]
   
-  # --------------------------------------------------------------------
-  # Step 1: Running TPM normalization
+  # -------------------------------------------------------------------
+  # Initial "TPM" normalization
   # -------------------------------------------------------------------
   
   matrix <- as.matrix(general)
@@ -56,14 +69,17 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   rownames(normlog_mat) <- rownames(general) 
   colnames(normlog_mat) <- colnames(general)
   
+  # -------------------------------------------------------------------
+  # Data Organization
+  # -------------------------------------------------------------------
+  
   ## Saving the original order of genes
   Order_Matrix <- matrix(0, ncol = ncol(normlog_mat), nrow = nrow(normlog_mat))
   for(l in 1:ncol(normlog_mat)){
     Order_Matrix[ , l] <- as.matrix(order(normlog_mat[ , l] , decreasing=TRUE) )
   }
   
-  #----------------------
-  ## Ranking non-zero expressions individually for each cell
+  ## Ranking genes by expression values in each cell
   nGene <- matrix(0, ncol=ncol(normlog_mat), nrow= 1)
   nonzero <- function(x) sum(x != 0)
   
@@ -82,9 +98,9 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   }
   colnames(ranked_mat) <- colnames(normlog_mat)
   
-  ####### ####### ####### ####### ####### ######
-  ##  Completion of RTAM normalization method ##
-  #### ####### ####### ####### ####### ###### ##
+  # -------------------------------------------------------------------
+  # RTAM normalization
+  # -------------------------------------------------------------------
   
   for(i in 1:ncol(ranked_mat)){ nGene[ ,i] <- nonzero(ranked_mat[,i])  }
   colnames(nGene) <- colnames(normlog_mat)
@@ -103,15 +119,9 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
     KK <- t(as.matrix(which(t(as.matrix(nGene)) < Min_nGene) ))
     ranked_mat2 <- ranked_mat
-    ##
     ranked_mat <- as.matrix( ranked_mat2[ , -KK ] )
     rownames(ranked_mat) <- rownames(general)
     colnames(ranked_mat) <- colnames(general[, -KK])
-    ##
-    normlog_mat <- as.matrix( normlog_mat[ , -KK ] )
-    rownames(normlog_mat) <- rownames(general) 
-    colnames(normlog_mat) <- colnames(general[, -KK])
-    ##
     Order_Matrix <-  as.matrix( Order_Matrix[ , -KK ] )
     if ( method == c("RTAM2")){
       G_mtrx <- as.matrix( G_mtrx[ , -KK ] )
@@ -134,7 +144,7 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     colnames(GG)<- colnames(ranked_mat)
     
     
-    ############# Asigning R_mat to aanked matrix of ordered gene expressios in each cell
+    ############# Asigning R_mat to ranked matrix of ordered gene expressions in each cell
   } else if ( method == c("RTAM1")){
     
     
@@ -166,7 +176,7 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
   }  
   
-  ## Finding optimize number of top expressions per cell to balance scaled expressions
+  ## Finding the optimal number of genes for RTAM normalization (to yield minimum variance in average geneset expression across the matrix)
   if( Optimizing == "TRUE" ) {
       
       SEQ <- seq(Min_nGene-floor(Min_nGene/2), Min_nGene, 5)
@@ -205,11 +215,11 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   
   
   # --------------------------------------------------------------------
-  # Step 2: RTAM2-Linear main step with special linear scaling strategy
+  # RTAM2 - differential normalization main step
   # -------------------------------------------------------------------
   if ( method == c("RTAM2")){
     
-    ## Defining top_mat as the sub-matrix of top expressions per cell
+    ## Defining top_mat as the sub-matrix of top-expressed genes per cell
     Y <- seq(1, Nt, 1)
     top_mat <- matrix(0, ncol = ncol(ranked_mat) , nrow= Nt )
     top_mat <- as.matrix(ranked_mat[Y, ])
@@ -223,10 +233,7 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
     pSum[1,] <- as.matrix( colSums(top_mat))
     
-    MIN_intesnse <- mean( pSum)
-    
-    print("mean of pSums:")
-    print(MIN_intesnse)
+    MIN_intesnse <- mean( pSum)   
     
     for(j in 1:ncol(G_mtrx)){
       hh <- 0
@@ -247,9 +254,9 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
     
     #------------------------------------------
-    ## Applying limitations to make sure that 
-    ## (i) the gene expression rank of non-zero transcription will not change
-    ## (ii) none of the expression will turn to a negative value
+    ## Normalization limitations to prevent: 
+    ## (i) changes in the expression-based ranking of expressed genes
+    ## (ii) negative expression values
     
     for(j in 1:ncol(ranked_mat)){
       
@@ -270,12 +277,12 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
   } 
   # ----------------------------------------------------------------
-  # Step 2: RTAM1 main step with special scaling strategy
+  # RTAM1 -differential normalization main step
   # ----------------------------------------------------------------
   else if ( method == c("RTAM1")){
     
-    ## Using the optimized/given number of top expressed 
-    ## genes for later on calculation
+    ## Using the optimized or specified number of top-expressed genes
+    
     
     Y <- seq(1, Nt, 1)
     top_mat <- matrix(0, ncol = ncol(ranked_mat) , nrow = Nt )
@@ -290,7 +297,6 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
     
     MIN_intesnse <- mean( pSum)  
     
-    # Calculating the  is basically the c_jscaling factor to adjust per cell expressions
     for(j in 1:ncol(ranked_mat)){
       ratio[1 ,j] <- ( MIN_intesnse - pSum[1,j] )/( (Nt + 3/2)*log2(Nt + 3/2) - Nt/log(2)-3/2*log2(3/2) )  
     }
@@ -310,7 +316,7 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   
   ############################################
   
-  ## Finalizing the normalized data by adding corrections to each expressions
+  ## Normalizing the data by adding the calculated corrections to each gene expression value
   LS <- ranked_mat + h_mtrx
   
   Scaled_Normalized_log <- matrix(0, ncol=ncol(ranked_mat), nrow=nrow(ranked_mat))
@@ -327,5 +333,7 @@ RTAM_normalization <- function(mat,           # Raw data of RNA-seq
   
   
 }
+
+
 
 
