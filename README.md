@@ -438,7 +438,7 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                No.test = No.test )
 ```
 
-The Heatmap of sciCNV profile is sketched in bellow by applying _Pearson_'s measurment and _ward.D2_ clustering algorithm: 
+The Heatmap of sciCNV profile is sketched in bellow against list of genes by applying _Pearson_'s measurment and _ward.D2_ clustering algorithm: 
 
 ![Fig8](Fig8.png)
 
