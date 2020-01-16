@@ -10,9 +10,9 @@
 # Please refer to the reference and supplemental materials described in the README for additional details.
 #
 # Definitions:
-# V7Alt: preliminary CNV-curve matrix egnerated by sciCNV function
+# V7Alt: preliminary CNV matrix egnerated by sciCNV function
 # n.TestCells: number of test cells
-# scaling.factor: scaling factor to re-scale the preliminary CNV-data
+# scaling.factor: scaling factor to re-scale the preliminary CNV estimate
 
 Scaling_CNV <-  function(V7Alt, 
                          n.TestCells, 
