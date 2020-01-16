@@ -395,6 +395,31 @@ TotScore <- CNV_score( M_nf = M_NF )
 
 The tumor CNV score can be segregate normal diplod cells from malignant cells containing the tumor clone CNVs.  For tumors with extensive CNVs, the tumor score is calculated across the genome. For tumors with only small or limited genomic CNVs, the calculation of tumor CNV scores should be restricted to the genomic locations that contain the tumor clone CNVs, in order to diminsh the influence of pan genome noise on the tumor CNV score and to better distionguish tumor cells from normals (see the bellow figure). Please see the attached reference and supplementla materials for additional information.
 
+```
+TotScoreSort0 <- sort(TotScore[1,1:No.test])
+TotScoreSortNPC <- sort(TotScore[1,(No.test+1):ncol(TotScore)])
+Labels <- c("Control","Test")
+names <- as.matrix(c(rep(Labels[1], length(TotScoreSortNPC)), rep(Labels[2],length(TotScoreSort0) )) )
+value <- c(as.matrix(TotScoreSortNPC), as.matrix(TotScoreSort0))
+data=data.frame(names,value)
+data$factor <- factor(data$names, levels=Labels)
+##
+graphics.off()
+plot.new()
+par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
+par(bty="l")
+COL <- c( "lightgrey","royalblue1","royalblue1","royalblue1")
+beanplot(data$value ~ data$factor , col=alpha(COL,0.8),
+         ylim=c(min(TotScore)-1,max(TotScore)+1), 
+         cex.lab = 2, cex.axis = 2, cex.main=2,
+         xlab = "Cell type",
+         ylab = "CNV score",
+         what=c(0,1,0,1),
+         bty='l', boxcol="gray" ,
+         outpch=16, outcex=1)
+title("Sample1: CNV score of individuals", col.main = "brown", cex.main = 2.5)
+```
+
 ![Fig8](Fig8.png)
 
 ***
