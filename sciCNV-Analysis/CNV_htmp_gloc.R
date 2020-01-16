@@ -351,10 +351,54 @@ CNV_htmp_gloc <- function(CNV.mat2,
   
   COL_vec <- c( rep("steelblue",1), rep("white",2),rep("firebrick",1) )
   
-  graphics.off()
-  plot.new()
-  par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
-  heatmap.3( final.mat ,  
+  COL_vec <- c( rep("steelblue",1), rep("white",2),rep("firebrick",1) )
+    
+  if(clustering == TRUE){
+     require("GMD")
+     require("cluster")
+     Separns <- c(1,nrow(final.mat)-No.test,nrow(final.mat)) 
+     
+     plot.new()
+     par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
+     heatmap.3( CNV.mat.clustered , 
+           main = "Heatmap of sciCNV profiles of test and control cells
+           Thr 0.5 of 1",  
+           xlab="Genomic location of expressed genes", 
+           ylab= "Cells",
+           breaks = seq(-LL, LL, length.out =16), 
+           col = colorRampPalette(COL_vec, space = "rgb")(15), 
+           Colv = "NA", 
+           trace="none", 
+           treeheight_row = 0.2,
+           sepwidth=c(0.2,0.2),
+           sepcolor = "black",
+           scale= "none",  
+           labRaw = NA, 
+           labCol = labels_call1,
+           Rowv = TRUE,  
+           dendrogram = "row",
+           cluster.by.row = TRUE,
+           hclust.FUN = hclst,
+           cexCol = 1,
+           srtCol=90,
+           cutree_rows = 2, 
+           hieght=50, width = 400, 
+           legend = TRUE, 
+           margins = c(4,2),      
+           key.xlab = "Transcription level",
+           denscol = "grey",
+           density.info = "density",
+           rowsep= Separns,
+           add.expr =  abline(v=break.gloc)    
+      )
+
+    } else {
+    
+       
+      graphics.off()
+      plot.new()
+      par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
+      heatmap.3( final.mat ,  
              main = paste("Heatmap of sciCNV profiles of test and control cells
                           Thr 0.5 of 1, ", NeighborNo ," nearst neighbors", sep="" ), 
              xlab = "Genomic location of expressed genes", 
@@ -380,9 +424,9 @@ CNV_htmp_gloc <- function(CNV.mat2,
              density.info = "density",
              rowsep = cluster.lines,
              add.expr = abline(v=break.gloc) 
-  )
+      )
   
-  
+  }
   
   
 }
