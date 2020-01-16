@@ -438,12 +438,13 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                No.test = No.test )
 ```
 
-The Heatmap of sciCNV profile is sketched in bellow against list of genes by applying _Pearson_'s measurment and _ward.D2_ clustering algorithm: 
-
-![Fig8](Fig8.png)
-
 ## Detecting subclones
 
 CNV profiles can be used to separate cells into subclones, as shown in below figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
+
+The following figures represent the detected subclones (for more information please refer to the paper and supplemental materials) against the genomic rank-order of genes (list of genes) and the physical genomic location of the genes respectively:
+
+![Fig8](Fig8.png)
+
 
 ![Fig9](Fig9.png)
