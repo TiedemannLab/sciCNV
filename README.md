@@ -165,7 +165,7 @@ plot(matrix(1,ncol=1,nrow=nrow(as.matrix(norm.data[,1][norm.data[,1]>0]))),
      col="darkgray" ,
      xlim=c(-ncol(norm.data)*.1, ncol(norm.data)*1.1),
      ylim=c(0,  4.2), xlab = "Cells (ranked by UMI)",
-     ylab = expression("Expressions ("*Log[2]*"(.+1 ))"), 
+     ylab = expression("Normalized gene expression ("*Log[2]*"(.+1 ))"), 
      cex.lab = 2, cex.axis = 2, cex.main=2)
 for(i in 2:ncol(norm.data)){
   par(new=TRUE)
@@ -205,7 +205,7 @@ for(j in 1:ncol(norm.data)){
 } 
 
 legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
-       legend=paste("Mean of 95% commonly expressed genes")) 
+       legend=paste("Mean of commonly-expressed genes")) 
 ```
 
 ![Fig2](Fig2.png)
@@ -223,7 +223,7 @@ for(k in 1:ncol(HK_mat)){
 
 par( new=TRUE)
 points(log2(Mean_HK_mat[1,] +1 ), col="blue" , pch=15, cex =0.5 )
-legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of houskeeping gene expressions"))
+legend(0,0.5,bty="n",pch=16,col=c("blue",NA), cex=1.5, legend=paste("Mean of houskeeping genes"))
 ```
 
 #![Fig3](Fig3.png)
