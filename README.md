@@ -1,10 +1,12 @@
 # README FILE 
 
-## This file provides an overview of the Tiedemann Lab scRNA-seq analysis pipeline that includes: 
+## This file provides an overview of the Tiedemann Lab scRNA-seq normalization and inferred CNV pipeline that includes: 
 - scRNA-seq RTAM data normalization
 - Single-cell Inferred Copy Number Variation (sciCNV)
 - Quality control (QC) 
 - visualization of results
+
+## The pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs. The analysis can be performed on thousands of cells, and thus can capture intra-tumor heterogeneity. It requires only scRNA-seq data. 
 
 
 ## Reference
@@ -139,7 +141,7 @@ rownames(raw.data) <- rownames(raw.data2)
 ***
 # RTAM1 and RTAM2 normalization
 
-RTAM1 or RTAM2 normalization procedures are applied. The number of highly expressed genes used for the alignment of transctiptomes can be specified. More information can be found in the reference supplemental materials and in the RTAM script.
+RTAM1 or RTAM2 normalization procedures are applied. The number of highly expressed genes used for the alignment of transctiptomes can be specified. In our usage, the 250 highest-expressed genes in each cell were typically used for RTAM normalization, although optionally an optimized number of genes for the normalization procedure can be determined for each dataset by running the optimizer function. More information can be found in the reference supplemental materials and in the RTAM script.
 
 ```
 norm.data <- RTAM_normalization(mat = raw.data,            
@@ -152,7 +154,7 @@ colnames(norm.data) <- colnames(raw.data)
 
 ## Plotting transcript counts per gene per cell
 
-To compare the normalized transcriptomes, the normalized expression of each gene in each cell is plotted. As transcript counts are integers, the expression values for many lowly expressed genes (with n=1,2,3 .. transcripts) are identical and align on tiers. Each tier may represent multiple genes in any single cell. 
+To compare the normalized transcriptomes, the normalized expression of each gene in each cell is plotted. As transcript counts are integers, the expression values for many lowly expressed genes (with n=1,2,3 .. transcripts) are identical and align on tiers. Each dot may represent the expression level of multiple genes in any single cell. 
 
 ```
 graphics.off()
@@ -289,9 +291,9 @@ tst.index <- seq(1, No.test , 1)                      # No of test cells
 
 (2) The sciCNV function is used to generate preliminary single cell inferred CNV curves for cells in the matrix. 
 
-Two variables can be used to enhance the quality of the output according to the input data.
+Two principal variables can be used to enhance the quality of the output according to the input data.
 
-The variable sharpness is used to define the sharpness (resolution) of the CNV analysis. The default value is 1.0; this can be adjusted (e.g. in the range 0.6-1.4) according to the sample data sparsity: higher values permit sharper detection of small CNV but require greater data density; lower values help offset sparse data.
+The variable sharpness is used to define the sharpness (resolution) of the CNV analysis. The default value is 1.0; this can be adjusted (e.g. in the range 0.5-1.5) according to the sample data sparsity: higher values permit sharper detection of small CNV but require greater data density; lower values help offset sparse data but yield lower resolution results.
 
 Baseline adjustment: For the default sciCNV analysis an assumption is made that chromosome gains and losses are approximately balanced and that the median copy number result for genes in each cell is zero. When these assumptions are substantially invalid (for example, as in the case of a cell with a large number of trisomies with substantial net genomic gain), the sciCNV analysis can be re-run using a baseline correction to correct the CNV zero set point and improve CNV detection. 'baseline' refers to a fraction representing the approximate net genomic change, where zero reflects balanced losses and gains, and 1 represents copy number gain of the entire genome. A positive fraction indicated net gain and a negative fraction indicates net genomic loss. Please refer to the reference supplemental materials.
 
@@ -310,7 +312,7 @@ to the calculation cost required to generate sciCNV-curves for each cell_.
 
 
 
-(3) The preliminary sciCNV profile matrix is scaled such that single (1) copy number gain/losses yield values of +1/-1. 
+(3) The preliminary sciCNV profile matrix yields data that is proportion to the square of the final sciCNV result(~sciCNV^2). At this point the data can be optionally scaled such that single (1) copy number gain/losses are centered on values of +1/-1. For example, after initial analysis del(13) is determined to be clonal amongst the cells examined. The average final sciCNV result should therefore be -1.0. The preliminary data is scaled so that the chromosome 13 result is corrected from -0.8 to -1. This has the effect of correcting the final sciCNV result, after square-root, for chromosome 13 from approx -0.9 to -1.0. Correct scaling of the data premits subsequent noise reduction.
 
 
 ```
@@ -319,7 +321,7 @@ M_NF <- CNV.data.scaled
 ```
 ![Fig6](Fig6.png)
 
-(4) As single cell CNV should be integers, preliminary sciCNV values falling below a noise threshold (0.4 or a user-specified threshold) were set to zero. We define M_NF as the noise-free data matrix, which is attached to the average expression of test cells.
+(4) As single cell CNV should be integers, preliminary sciCNV values falling below a noise threshold (0.4 or a user-specified threshold) are set to zero. We define M_NF as the noise-free data matrix, which is attached to the average expression of test cells.
 
 ```
 # Noise threshold
@@ -351,7 +353,7 @@ rownames(M_NF) <- rownames(CNV.data.scaled)
 colnames(M_NF) <- c(colnames(CNV.data.scaled)[-length(colnames(CNV.data.scaled))], "AveTest")
 ```
 
-(6) In order to plot sciCNV profiles by genomic location, rather than by gene rank, genomic locations are determined.
+(6) In order to plot sciCNV profiles by physical genomic location, rather than by location-ranked gene list, genomic locations are determined.
 
 ```
 Gen.Loc <- read.table("./Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
@@ -385,13 +387,13 @@ Sketch_AveCNV( Ave.mat = M_NF[, ncol(M_NF)], Gen.loc = Gen.Loc  )
 ***
 # Tumor clone CNV scores
 
-sciCNV can be used to identify cancer cells, distinguishing these from normal cells on the basis of their CNV profile. The sciCNV profile of single cells is assessed against the average sciCNV profile of tumor cells. 
+sciCNV can be used to identify cancer cells, distinguishing these from normal cells on the basis of their CNV profile (see the reference). The sciCNV profile of single cells is assessed against the average sciCNV profile of tumor cells. 
 
 ```
 TotScore <- CNV_score( M_nf = M_NF )
 ```
 
-Tumor CNV scores for single cells can be also sketched which shows the segregation of normal plasma cells (NPC) and tumor plasma cells by their CNV scores. Due to frequency of noise in single-cell data, one may calculate CNV score for specific regions across the genome which would highlight segregation better.
+The tumor CNV score can be segregate normal diplod cells from malignant cells containing the tumor clone CNVs.  For tumors with extensive CNVs, the tumor score is calculated across the genome. For tumors with only small or limited genomic CNVs, the calculation of tumor CNV scores should be restricted to the genomic locations that contain the tumor clone CNVs, in order to diminsh the influence of pan genome noise on the tumor CNV score and to better distionguish tumor cells from normals. Please see the attached reference and supplementla materials for additional information.
 
 
 ***
@@ -399,10 +401,10 @@ Tumor CNV scores for single cells can be also sketched which shows the segregati
 
 The results of sciCNV profiling of multiple cells can be reviewed in a heatmap. The _heatmap3_ function 
 is utilized. Single cell sciCNV values (colour-scale) for mutliple cells (y axis) are plotted either by: 
-1) genomic rank-order of genes from which the CVS are derived (using _CNV_htmp_glist_ function) or by
+1) genomic rank-order of genes from which the CNVs are derived (using _CNV_htmp_glist_ function) or by
 2) the physical genomic location of the genes (manipulating  _CNV_htmp_gloc_ function).
 
-Option 1 has the advantage that the heatmap provides an image in which pixels map directly to the underlying (gene) data density; regions with few genes are under-represented (drawn as short stretches) while regions with many genes are over-represented (long stretches). Option 2 stretches (interpolates) and/or condenses the sciCNV profiles to map onto a physical genome, and thus provides a CNV picture that more closely resembles the physical chromatin structure. 
+Option 1 has the advantage of providing a heatmap image in which the x-axis pixels map directly to the underlying (gene) data density; regions with few genes (and limited data) are drawn as short stretches while regions with many genes are drawn as long stretches. Option 2 stretches (interpolates) and/or condenses the intial sciCNV profiles to map these onto a physical genome, and thus provides a CNV picture that correlates with the physical chromatin structure. 
 
 ```
 CNV.mat <- t( M_NF[, -ncol(M_NF)])   
@@ -438,13 +440,10 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                No.test = No.test )
 ```
 
-## Detecting subclones
+A preliminary heatmap of the sciCNV profiles of the test and control cells can be initally prepared against the list of informative genes. The preliminary heatmap can be useful for segregating normal and tumor cells and for identifying subclones. It is recognized however that in samples with limited CNVs (as a % of the informative genes) clustering may be driven to some extent by noise in the CNV profiles of single cells, undermining full subclone segregation. Additional supervised clustering may therefore optionally be applied. sciCNV profiles can separate cells into subclones, as shown in the following figures (for 
+genomic rank-order of genes (list of genes) as well as the physical genomic location of the genes). Indeed, CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later must integrate gene expression changes from variable cellular functions such as proliferation. For more information on the comparison of gene expression-based and sciCNV-based cell clustering, please see the reference and supplemental materials. 
 
-CNV profiles can be used to separate cells into subclones, as shown in below figure. CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later can be confounded by cellular functions such as prolfieration. For more details, please see the reference and supplemental materials. 
-
-The following figures represent the detected subclones (for more information please refer to the paper and supplemental materials) against the genomic rank-order of genes (list of genes) and the physical genomic location of the genes respectively:
 
 ![Fig8](Fig8.png)
-
 
 ![Fig9](Fig9.png)
