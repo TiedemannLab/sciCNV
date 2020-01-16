@@ -7,6 +7,8 @@
 ######                        copyright@AliMahdipourShirayeh                    #######
 #######################################################################################
 
+# Ave.mat: the average of sciCNV-curves of test cells
+
 Sketch_AveCNV <- function(Ave.mat){
   
   Gen.loc <- read.table("../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = ',', header=TRUE)
