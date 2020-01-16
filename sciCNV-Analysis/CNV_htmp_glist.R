@@ -197,7 +197,7 @@ CNV_htmp_glist <- function(CNV.mat2,
   plot.new()
   par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
   heatmap.3( final.mat ,  
-             main = paste("Heatmap for transcriptions relative to normal control
+             main = paste("Heatmap of sciCNV profiles of test and control cells
                           Thr 0.5 of 1, ", NeighborNo ," nearst neighbors", sep="" ), 
              xlab = "Genomic location of expressed genes", 
              ylab= "Cells",
