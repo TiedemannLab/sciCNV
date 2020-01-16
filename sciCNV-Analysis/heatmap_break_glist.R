@@ -7,6 +7,8 @@
 ######                            copyright@AliMahdipourShirayeh                          #######
 #################################################################################################
 
+# CNV.mat2: the matrix of sciCNV of test and controcl cells
+
 heatmap_break_glist <- function(CNV.mat2){
   
   gen.loc <- read.table( "../sciCNV/Dataset/10XGenomics_gen_pos_GRCh38-1.2.0.txt", sep = '\t', header=TRUE)
