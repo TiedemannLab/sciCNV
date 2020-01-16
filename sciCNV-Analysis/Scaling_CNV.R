@@ -7,7 +7,12 @@
 ######                        copyright@AliMahdipourShirayeh                    #######
 #######################################################################################
 
-Scaling_CNV <-  function(V7Alt, n.TestCells, scaling.factor ){
+# V7Alt: preliminary CNV-curve matrix egnerated by sciCNV function
+
+
+Scaling_CNV <-  function(V7Alt, 
+                         n.TestCells, 
+                         scaling.factor ){
   
   # argument validation
   if ( Reduce("|",is.na(V7Alt)) ){
