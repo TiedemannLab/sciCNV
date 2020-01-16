@@ -12,11 +12,11 @@
 #
 # Definitions:
 # mat: raw data matrix 
-# percent.mito.G: percentage of total number of mitochondrial reads to to
-# CNVscore: is the tumor CNV score matrix for all cells (possibly ranked within clusters). Only used when sorting.clusters = TRUE.
-# cluster.lines: is a list of values which can be used to separate cell clusters within the population; only used if multiple clusters present
-# break.gloc: is a set of values each defines a vertical line that separates chromosomes
+# percent.mito.G: percentage of mitochondrial transcripts relative to total number of reads per cell
+# nUMI: number of unified molecular identification (UMI)
+# nGene: number of expressed genes
 # No.test: number of test cells included in the data; can be used to delineate the populations of test and control cells in the heatmap
+# drop.mads: number of the median absolute deviation (MAD) to drop damaged cells using the percentage of mitochondrial expression level
 
 Mito_umi_gn <- function( mat = MMS, 
                          percent.mito.G = percent.mito.G,
