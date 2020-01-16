@@ -393,8 +393,9 @@ sciCNV can be used to identify cancer cells, distinguishing these from normal ce
 TotScore <- CNV_score( M_nf = M_NF )
 ```
 
-The tumor CNV score can be segregate normal diplod cells from malignant cells containing the tumor clone CNVs.  For tumors with extensive CNVs, the tumor score is calculated across the genome. For tumors with only small or limited genomic CNVs, the calculation of tumor CNV scores should be restricted to the genomic locations that contain the tumor clone CNVs, in order to diminsh the influence of pan genome noise on the tumor CNV score and to better distionguish tumor cells from normals. Please see the attached reference and supplementla materials for additional information.
+The tumor CNV score can be segregate normal diplod cells from malignant cells containing the tumor clone CNVs.  For tumors with extensive CNVs, the tumor score is calculated across the genome. For tumors with only small or limited genomic CNVs, the calculation of tumor CNV scores should be restricted to the genomic locations that contain the tumor clone CNVs, in order to diminsh the influence of pan genome noise on the tumor CNV score and to better distionguish tumor cells from normals (see the bellow figure). Please see the attached reference and supplementla materials for additional information.
 
+![Fig8](Fig8.png)
 
 ***
 # Heatmap of sciCNV profiles of cells
@@ -444,6 +445,6 @@ A preliminary heatmap of the sciCNV profiles of the test and control cells can b
 genomic rank-order of genes (list of genes) as well as the physical genomic location of the genes). Indeed, CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later must integrate gene expression changes from variable cellular functions such as proliferation. For more information on the comparison of gene expression-based and sciCNV-based cell clustering, please see the reference and supplemental materials. 
 
 
-![Fig8](Fig8.png)
-
 ![Fig9](Fig9.png)
+
+![Fig10](Fig10.png)
