@@ -7,11 +7,21 @@
 ######                       copyright@AliMahdipourShirayeh                        #######
 ##########################################################################################
 
+# Please refer to the reference and supplemental materials described in the README for additional details.
+#
+# Definitions:
+# Normalized_log: the matrix of Log2(.+1)-normalized data 
+# Order_Matrix: the matrix of original order of gene expressions per cell
+# nGene: number of expressed genes
+# Min_nGene: minimum number of expressed genes across entire population
+# gene_cutoff: the cutoff to calculate the summation of top (nonzero) gene expressions
+
 Opt_MeanSD_RTAM1 <- function(Normalized_log, 
                              Order_Matrix, 
                              nGene, 
                              Min_nGene, 
-                             gene_cutoff){    
+                             gene_cutoff
+                            ){    
   
   
   L <- dim(Normalized_log)[1]
@@ -136,4 +146,7 @@ Opt_MeanSD_RTAM1 <- function(Normalized_log,
   return(Sd_Aper/Mean_Aper)
   
 }
+
+
+
 
