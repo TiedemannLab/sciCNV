@@ -21,7 +21,7 @@ Opt_MeanSD_RTAM1 <- function(Normalized_log,
                              nGene, 
                              Min_nGene, 
                              gene_cutoff
- ){    
+){    
   
   
   L <- dim(Normalized_log)[1]
