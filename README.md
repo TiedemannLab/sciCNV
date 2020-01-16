@@ -414,7 +414,7 @@ beanplot(data$value ~ data$factor , col=alpha(COL,0.8),
          cex.lab = 2, cex.axis = 2, cex.main=2,
          xlab = "Cell type",
          ylab = "CNV score",
-         what=c(0,1,0,1),
+         what=c(0,1,1,1),
          bty='l', boxcol="gray" ,
          outpch=16, outcex=1)
 title("Sample1: CNV score of individuals", col.main = "brown", cex.main = 2.5)
