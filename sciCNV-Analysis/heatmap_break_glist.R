@@ -7,7 +7,7 @@
 ######                            copyright@AliMahdipourShirayeh                          #######
 #################################################################################################
 
-# CNV.mat2: the matrix of sciCNV of test and controcl cells
+# CNV.mat2: the sciCNV matrix of test and controcl cells
 
 heatmap_break_glist <- function(CNV.mat2){
   
