@@ -299,8 +299,6 @@ TotScore <- CNV_score( M_nf = M_NF )
 ## sketching tumor scores for all cells showing segregation of test/control tumor scores
 TotScoreSort0 <- sort(TotScore[1,1:No.test])
 TotScoreSortNPC <- sort(TotScore[1,(No.test+1):ncol(TotScore)])
-
-colors <- c( "royalblue1","brown1")
 Labels <- c("Control","Test")
 names <- as.matrix(c(rep(Labels[1], length(TotScoreSortNPC)), rep(Labels[2],length(TotScoreSort0) )) )
 value <- c(as.matrix(TotScoreSortNPC), as.matrix(TotScoreSort0))
@@ -311,24 +309,17 @@ graphics.off()
 plot.new()
 par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
 par(bty="l")
-boxplot(data$value ~ data$factor , col=alpha(colors,0.6),
-        ylim=c(min(TotScore)-1,max(TotScore)+1), 
-        cex.lab = 2, cex.axis = 2, cex.main=2,
-        xlab = "Type of individuals"
-        , ylab = "CNV-score",
-        bty='l', boxcol="gray" ,
-        outpch=16, outcex=1)
-title("CNV-score of individuals", col.main = "brown", cex.main = 2.5)
-##
-mylevels<-levels(data$factor)
-levelProportions<-summary(data$factor)/nrow(data)
-for(i in 1:length(mylevels)){
-  thislevel<-mylevels[i]
-  thisvalues<-data[data$factor==thislevel, "value"]
-  myjitter<-jitter(rep(i, length(thisvalues)), amount=levelProportions[i]/2)
-  points(myjitter, thisvalues, pch=20, cex=2, xaxt = "n",yaxt = "n",col=alpha(colors[i], 0.6)) 
-}
-
+COL <- c( "lightgrey","royalblue1","royalblue1","royalblue1")
+beanplot(data$value ~ data$factor , col=alpha(COL,0.8),
+         ylim=c(min(TotScore)-1,max(TotScore)+1), 
+         cex.lab = 2, cex.axis = 2, cex.main=2,
+         xlab = "Cell type",
+         ylab = "CNV score",
+         what=c(0,1,0,1),
+         bty='l', boxcol="gray" ,
+         outpch=16, outcex=1)
+title("Sample1: CNV score of individuals", col.main = "brown", cex.main = 2.5)
+ 
 #--------------------------------------------------------------
 ##  Heatmap of sciCNV profiles and detection of subclones
 #--------------------------------------------------------------
