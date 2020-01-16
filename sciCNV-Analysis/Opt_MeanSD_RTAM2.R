@@ -12,7 +12,7 @@
 # Definitions:
 # Normalized_log: the matrix of Log2(.+1)-normalized data 
 # Order_Matrix: the matrix of original order of gene expressions per cell
-# G_mtrx: matrix of 
+# G_mtrx: TPM-normalized matrix of the data
 # nGene: number of expressed genes
 # Min_nGene: minimum number of expressed genes across entire population
 # gene_cutoff: the cutoff to calculate the summation of top (nonzero) gene expressions
