@@ -18,10 +18,10 @@
 # No.test: number of test cells included in the data; can be used to delineate the populations of test and control cells in the heatmap
 # drop.mads: number of the median absolute deviation (MAD) to drop damaged cells using the percentage of mitochondrial expression level
 
-Mito_umi_gn <- function( mat = MMS, 
-                         percent.mito.G = percent.mito.G,
-                         nUMI = nUMI,
-                         nGene = nGene1,
+Mito_umi_gn <- function( mat , 
+                         percent.mito.G ,
+                         nUMI ,
+                         nGene,
                          No.test,
                          drop.mads = 3
 ){
@@ -72,11 +72,11 @@ Mito_umi_gn <- function( mat = MMS,
   damaged_cells <- as.matrix(which(percent.mito.G > threshold) )
   
   par(mar=c(3,3,0,0),mgp=2:0)
-  plot( t(as.matrix(nGene1))[1:No.test] ~ t(as.matrix(nUMI))[1:No.test], 
+  plot( t(as.matrix(nGene))[1:No.test] ~ t(as.matrix(nUMI))[1:No.test], 
         col=alpha("black",0.2),  
         pch=16, cex=1.2, xlab="nUMI", ylab="nGene",
         cex.lab=1.5,cex.lim=1.5,cex.axis=1.5)
-  points( t(as.matrix(nGene1))[damaged_cells] ~ t(as.matrix(nUMI))[damaged_cells] ,
+  points( t(as.matrix(nGene))[damaged_cells] ~ t(as.matrix(nUMI))[damaged_cells] ,
           pch=21,cex=1.2,col=alpha("red",0.5),bg=alpha("red",0.3))
   legend("topleft",bty="n",pch=21,col=alpha("red",0.8),pt.bg=alpha("red",0.8),
          legend="Damaged cells")
@@ -91,8 +91,8 @@ Mito_umi_gn <- function( mat = MMS,
   
   
   par(mar=c(3,0,0,1))
-  Dnsty <-  density(as.matrix(nGene1[1:No.test])) 
-  HST <- hist( nGene1 ,breaks=100,plot=F)
+  Dnsty <-  density(as.matrix(nGene[1:No.test])) 
+  HST <- hist( nGene ,breaks=100,plot=F)
   BAR <- barplot(HST$density,horiz=T,space=0,col="grey",main=NULL,xlab="Density")
   SLOPE <- (max(BAR) - min(BAR)) / (max(HST$mids) - min(HST$mids))
   lines(y=Dnsty$x * SLOPE + (min(BAR) - min(HST$mids) * SLOPE),
@@ -108,6 +108,7 @@ Mito_umi_gn <- function( mat = MMS,
   
   
 }
+
 
 
 
