@@ -32,8 +32,9 @@ CNV_htmp_gloc <- function(CNV.mat2,
                           sorting = TRUE,            # TRUE or FALSE
                           CNVscore = NULL,                # Only exists when sorting = TRUE 
                           cluster.lines = NULL,   
-                          break.gloc = break.gloc, 
-                          No.test ){
+                          break.gloc, 
+                          No.test 
+){
   
   ## argument validation
   if ( missing(sorting) ){
