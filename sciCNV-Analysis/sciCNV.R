@@ -17,17 +17,17 @@
 #       Default =1.0 (range approximately 0.6-1.4). 
 #       A lower sharpness can be used to offset data sparsity and provide more reliable detection of large CNVs.
 #       A higher sharpness provides more resolution for the detection of smaller CNVs but is more susceptible to noise from data sparsity and thus requires greater data density.
+# baseline_adj: The baseline adjustment is only applied to test cells if TRUE is specified. Default is FALSE. 
 # baseline: An optional correction to adjust the CNV zero setpoint (copy number gain =0) and improve CNV detection when CN gains and losses are substantially unbalanced.
 #       Consider using for markedly hyperdiploid or hyodiploid cells with multiple trisomies or monosomies where the chromosome number deviates substantially from 46.
 #       Default = 0. Ideal setting: a fraction representing the net fractional genomic change from diploidy (using a positive fraction for gain and a negative fraction for net genomic loss).
 #       If the CNV profile is unknown, run the CNV analysis with default zero setting, review the preliminary CNV profile, and consider re-running with baseline ccorrection.
-# baseline_adj: The baseline adjustment is only applied to test cells if TRUE is specified. Default is FALSE. 
 
 
 sciCNV <- function(norm.mat, 
                    No.test, 
                    sharpness, 
-                   baseline_adj,   # TRUE or FALSE
+                   baseline_adj = FALSE,   # TRUE or FALSE
                    baseline = 0    # default is 0. Typical range -0.5 to +0.5.
 ){
   
