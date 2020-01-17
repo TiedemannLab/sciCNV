@@ -23,7 +23,8 @@ CNV_infer  <- function( ss.expr ,
                         sharpness, 
                         baseline_adj,
                         baseline,
-                        new.genes ){ 
+                        new.genes
+){ 
   
   ## argument value/validation
   if (is.na(baseline)){
