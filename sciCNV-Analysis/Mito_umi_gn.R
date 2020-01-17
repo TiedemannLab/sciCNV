@@ -113,5 +113,3 @@ Mito_umi_gn <- function( mat ,
 
 
 
-
-
