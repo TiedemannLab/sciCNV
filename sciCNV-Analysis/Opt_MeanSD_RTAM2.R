@@ -131,7 +131,7 @@ Opt_MeanSD_RTAM2 <- function(Normalized_log,
   MEAN_Z3 <-  matrix(0, ncol=ncol(AA) , nrow=1)
   
   for(j in 1:ncol(AA)){
-    MEAN_Z3[1, j] <- as.numeric( mean(as.matrix(Z3[,j][Z3[,j]>0])) )
+    MEAN_Z3[1, j] <- as.numeric( mean(as.matrix(Z3[j][ Z3[j]>0 ])) )
     
   }
   
