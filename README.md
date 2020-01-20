@@ -6,7 +6,7 @@
 - Quality control (QC) 
 - visualization of results
 
-## The pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs. The analysis can be performed on thousands of cells, and thus can capture intra-tumor heterogeneity. It requires only scRNA-seq data. 
+### _The pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs. The analysis can be performed on thousands of cells, and thus can capture intra-tumor heterogeneity. It requires only scRNA-seq data._ 
 
 
 ## Reference
