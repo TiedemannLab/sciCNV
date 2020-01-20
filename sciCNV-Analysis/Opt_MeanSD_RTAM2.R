@@ -124,19 +124,15 @@ Opt_MeanSD_RTAM2 <- function(Normalized_log,
     Scaled_Normalized_log[ as.matrix(Order_Matrix[, j]) , j] <- LS1[  , j]
   }
   
-  
-  
 
-
-
-Scaled_Normalized_log <- as.matrix(Scaled_Normalized_log)
+  Scaled_Normalized_log <- as.matrix(Scaled_Normalized_log)
   comm.expr <-   as.matrix(Scaled_Normalized_log[which(rowSums(Scaled_Normalized_log[ ,seq(1, ncol(AA), 1)]!=0) > 0.95*ncol(Scaled_Normalized_log) ), ] )
   MEAN_comm <- matrix(0, ncol=ncol(AA), nrow=1)
   for(j in 1:ncol(AA)){
     
     if( sum(comm.expr[j]) > 0){
       MEAN_comm[1,j] <- mean(comm.expr[j][comm.expr[j]>0]) 
-    }else{
+    } else {
       MEAN_comm[1,j] <- 0
     }
     
