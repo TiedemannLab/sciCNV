@@ -118,16 +118,19 @@ RTAM_normalization <- function(mat,           # Raw scRNA-seq data
   if( Min_nGene > min(nGene) ){
     
     KK <- t(as.matrix(which(t(as.matrix(nGene)) < Min_nGene) ))
-    ranked_mat2 <- ranked_mat
-    ranked_mat <- as.matrix( ranked_mat2[ , -KK ] )
-    rownames(ranked_mat) <- rownames(general)
+    ##
+    ranked_mat <- as.matrix( ranked_mat[ , -KK ] )
     colnames(ranked_mat) <- colnames(general[, -KK])
+    ##
+    normlog_mat <- as.matrix( normlog_mat[ , -KK ] )
+    rownames(normlog_mat) <- rownames(general) 
+    colnames(normlog_mat) <- colnames(general[, -KK])
+    ##
     Order_Matrix <-  as.matrix( Order_Matrix[ , -KK ] )
     if ( method == c("RTAM2")){
       G_mtrx <- as.matrix( G_mtrx[ , -KK ] )
     }
   }
-  
   
   ############## Ranked matrix of colum-sum normalized data for RTAM2 method
   if ( method == c("RTAM2")){
