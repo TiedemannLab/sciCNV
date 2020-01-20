@@ -11,7 +11,7 @@
 
 ## Reference
 
-_Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Paola Neri, Ines Tagoug, Rodger E. Tiedemann, **Dissecting the effects of DNA copy number variations on transcriptional programs at single-cell resolution**, Submitted_
+Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Paola Neri, Ines Tagoug, Rodger E. Tiedemann, _**Dissecting the effects of DNA copy number variations on transcriptional programs at single-cell resolution**_, under review.
 
 
 ## Summary
