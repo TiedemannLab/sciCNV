@@ -131,19 +131,26 @@ Opt_MeanSD_RTAM1 <- function(Normalized_log,
   }
   
   
-  AAA <- as.matrix(Scaled_Normalized_log)
-  Z3 <-   as.matrix(AAA[which(rowSums(AAA[ ,seq(1, ncol(AA), 1)]!=0) > 0.95*W ), ] )
-  MEAN_Z3 <-  matrix(0, ncol=ncol(AA) , nrow=1)
   
+
+
+
+Scaled_Normalized_log <- as.matrix(Scaled_Normalized_log)
+  comm.expr <-   as.matrix(Scaled_Normalized_log[which(rowSums(Scaled_Normalized_log[ ,seq(1, ncol(AA), 1)]!=0) > 0.95*ncol(Scaled_Normalized_log) ), ] )
+  MEAN_comm <- matrix(0, ncol=ncol(AA), nrow=1)
   for(j in 1:ncol(AA)){
-    MEAN_Z3[1, j] <- as.numeric( mean(as.matrix(Z3[j][ Z3[j]>0 ])) )
+    
+    if( sum(comm.expr[j]) > 0){
+      MEAN_comm[1,j] <- mean(comm.expr[j][comm.expr[j]>0]) 
+    } else {
+      MEAN_comm[1,j] <- 0
+    }
     
   }
   
-  Mean_Aper <- as.matrix(mean(MEAN_Z3))  # Mean of A% common genes
-  Sd_Aper <- as.matrix( sd(MEAN_Z3) )
-  
-  return(Sd_Aper/Mean_Aper)
+  # Mean of A% common genes
+  Mean_Aper <- as.matrix(mean(MEAN_comm))  
+  Sd_Aper <- as.matrix( sd(MEAN_comm))
   
 }
 
