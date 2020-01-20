@@ -195,9 +195,6 @@ Sqnce <- seq(1,ncol(norm.data),1)
 Common.mat <-   as.matrix(norm.data[which(rowSums(norm.data[,Sqnce ] != 0) > 0.95*ncol(norm.data) ), ] )
 
 library(robustbase)
-COLMED <- log2(colMeans(as.matrix(Common.mat[Common.mat>0])) +1)
-COLMED <- t(as.matrix(COLMED) )
-
 for(j in 1:ncol(norm.data)){
   par( new=TRUE)
   points(matrix(j,ncol=1,nrow=1),
@@ -217,7 +214,7 @@ legend(0,0.75,bty="n",pch=16,col=c("red",NA), cex=1.5,
 
 ```
 Houskeeping_gene_list <- read.table( "./Dataset/HouseKeepingGenes.txt", sep = '\t',header = TRUE)
-HK_mat  <- norm.data[which(raw.data1[ , 1]%in% t(as.matrix(Houskeeping_gene_list))), ]
+HK_mat  <- norm.data[which(rownames(norm.data)%in% t(as.matrix(Houskeeping_gene_list))), ]
 HK_mat <- as.matrix(HK_mat)
 for(k in 1:ncol(HK_mat)){
   Mean_HK_mat[1, k] <- as.numeric(mean(HK_mat[,k][HK_mat[,k]>0]))
