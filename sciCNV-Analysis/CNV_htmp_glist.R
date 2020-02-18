@@ -51,10 +51,10 @@ CNV_htmp_glist <- function(CNV.mat2,
       stop("Sorting can occur when clustering = FALSE.")
     }
   } else if (clustering == "FALSE"){
-    if ( (sorting == "TRUE") & Reduce("|", is.na(CNVscore)) ){
+    if ( (sorting == "TRUE") & Reduce("|", is.null(CNVscore)) ){
       stop("Please insert a list of CNV-scores")
     }
-    if ( (sorting == "FALSE") & Reduce("|", ! is.na(CNVscore)) ){
+    if ( (sorting == "FALSE") & Reduce("|", ! is.null(CNVscore)) ){
       stop("Please change sorting status to TRUE to sort data based on CNVscore vector.")
     }
   }
