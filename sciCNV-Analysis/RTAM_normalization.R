@@ -186,24 +186,24 @@ RTAM_normalization <- function(mat,           # Raw scRNA-seq data
       Dispersion <- rep("NA", length(SEQ))
     
         if ( method == "RTAM2"){
-          Dispersion[1:length(SEQ)] <- lapply( 1:length(SEQ) , function(i){
+          Dispersion[1:length(SEQ)] <- parallel::mclapply( 1:length(SEQ) , function(i){
                     Opt_MeanSD_RTAM2(Normalized_log = normlog_mat, 
                                      Order_Matrix = Order_Matrix, 
                                      G_mtrx =  G_mtrx, 
                                      nGene =  nGene, 
                                      Min_nGene = Min_nGene, 
                                      gene_cutoff = SEQ[i])
-          })
+          }. mc.cores=8)
           
         }else{
           
-          Dispersion[1:length(SEQ)] <- lapply( 1:length(SEQ) , function(i){
+          Dispersion[1:length(SEQ)] <- parallel::mclapply( 1:length(SEQ) , function(i){
                     Opt_MeanSD_RTAM1(Normalized_log = normlog_mat, 
                                      Order_Matrix = Order_Matrix, 
                                      nGene = nGene, 
                                      Min_nGene = Min_nGene, 
                                      gene_cutoff = SEQ[i])
-          })
+          }, mc.cores=8)
         
         }
       
