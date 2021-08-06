@@ -148,6 +148,7 @@ Opt_MeanSD_RTAM1 <- function(Normalized_log,
   Mean_Aper <- as.matrix(mean(MEAN_comm))  
   Sd_Aper <- as.matrix( sd(MEAN_comm))
   
+  return(Sd_Aper/Mean_Aper)
 }
 
 
