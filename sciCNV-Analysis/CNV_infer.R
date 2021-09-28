@@ -62,7 +62,7 @@ CNV_infer  <- function( ss.expr ,
   O52 <- 1 - O51;    P31 <- P12/2
   E22 <- 1;          E23 <- 1
   O25 <- 0.78;       O26 <- 0.2
-  C297 <- resolution/10  # = 4  #8
+  C297 <- resolution/10  
   C298 <- 2;         J311 <- 1
   m <- 1.0001
   t <-  0.0002
