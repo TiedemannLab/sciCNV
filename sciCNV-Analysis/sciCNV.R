@@ -96,8 +96,8 @@ sciCNV <- function(norm.mat,
   new.genes <- rownames(MSC1)
   clmns <- ncol(norm.mat)
   chr.n <- as.matrix( gen.Loc[which(as.matrix(gen.Loc[,1]) %in% new.genes), 2])
-  resolution <- nrow(MSC)/(50*sharpness)
-  P12 <- floor(resolution) 
+  resolution <- 50*sharpness
+  P12 <- floor(nrow(MSC)/resolution) 
   row.n <- length(new.genes)
   FF <- rep(0, row.n)
   AW <- rep(0, row.n)
