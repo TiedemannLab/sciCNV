@@ -105,7 +105,6 @@ CNV_htmp_glist <- function(CNV.mat2,
     colnames(CNV.mat1) <- colnames(CNV.mat2)
   }
   
-  
   ROWlist <- rownames(CNV.mat1)
   COLlist <- colnames(CNV.mat1)
   
@@ -184,8 +183,7 @@ CNV_htmp_glist <- function(CNV.mat2,
     label.call.glist[break.glist[24] ] <- as.matrix(label.glist[24])
   } else {
     label.call.glist[break.glist[23] ] <- as.matrix(label.glist[23])
-  }
-  
+  } 
   
   rownames(CNV.mat3) <- ROWlist 
   final.mat <- CNV.mat3
@@ -233,8 +231,7 @@ CNV_htmp_glist <- function(CNV.mat2,
       )
 
      } else {
-    
-     
+       
      graphics.off()
      plot.new()
      par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
