@@ -91,16 +91,11 @@ Opt_MeanSD_RTAM1 <- function(Normalized_log,
   }
   
   
-  
-  
-  
   ############################################# 
-  
   
   Y <- seq(1, gene_cutoff, 1)
   BB <- matrix(0, ncol= ncol(AA) , nrow= gene_cutoff )
   BB <- as.matrix(AA[Y, ])
-  
   
   #------------------
   pSum <- t(as.matrix(colSums(BB)))
