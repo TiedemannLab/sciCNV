@@ -1,8 +1,5 @@
 
 
-
-
-
 #######################################################################################
 ######                             CNV_infer function                           ####### 
 ######          for Single Cell Inferred Copy Number Variation (sciCNV)         #######
@@ -219,7 +216,6 @@ CNV_infer  <- function( ss.expr ,
       }
     }
   }
-  
   
   
   #---------------------- AF: maV7-alt x maW-lin curve & AG: maV7-alt x maW-lin curve with Manual Scale
