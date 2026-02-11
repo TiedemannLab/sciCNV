@@ -68,6 +68,7 @@ Mito_umi_gn <- function( mat ,
   
   
   #----- Selecting damged cells
+  
   damaged_cells <- NULL
   damaged_cells <- as.matrix(which(percent.mito.G > threshold) )
   
