@@ -33,8 +33,6 @@ heatmap_break_glist <- function(CNV.mat2){
     break.glist[24] <- min( which(rownames(assoc.chr) == "Y"))
   }
   
-  
-  
 return(break.glist)
   
 }
