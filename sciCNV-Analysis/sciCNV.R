@@ -1,7 +1,5 @@
 
 
-
-
 #######################################################################################
 ######                             sciCNV Method                                ####### 
 ######   Single Cell Inferred Copy Number Variations, detected from scRNA-seq   #######
@@ -68,7 +66,6 @@ sciCNV <- function(norm.mat,
   }
   
   
-  
   ## Attaching the average gene expression of the control cells 
   
   norm.mat1 <- cbind(gen.Loc, as.matrix(norm.mat), ave.ctrl )
@@ -132,7 +129,6 @@ sciCNV <- function(norm.mat,
       } else { BD[i] <-  0}
     } else { BD[i] <-  P12}
   }
-  
   
   mat.fab <- cbind(FF,AW, BD)
 
