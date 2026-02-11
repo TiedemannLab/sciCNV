@@ -44,8 +44,6 @@ for(i in 1:24){
   Min_chr[i+1]  <-  maxx[1,i]              
 }
 
-
-
 break.gloc <- rep(0,24)
 break.gloc[1] <- 1
 
