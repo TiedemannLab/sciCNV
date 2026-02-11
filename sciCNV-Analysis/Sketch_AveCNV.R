@@ -48,7 +48,6 @@ Sketch_AveCNV <- function(Ave.mat){
     Break[1,24] <- nrow(as.matrix(Ave.mat))
   }
   
-  
   Break_lines <- as.matrix(c(Break, nrow(Assoc.Chr)))
   abline(v=Break_lines, col="gray65", lty=2)
    par(new=TRUE); 
@@ -61,7 +60,6 @@ Sketch_AveCNV <- function(Ave.mat){
    points(Break , matrix(c(1.8, 1.7 ), ncol=24, nrow=1), pch=16, col="royalblue1", cex=4)
    text(Break , matrix(c(1.8, 1.7 ), ncol = 24, nrow = 1), c(seq(1, 22, 1),"X","Y"), 
         col = "white", cex = 1.2)
-   
   
   title("Average pre-sciCNV profile of test cells relative to control cells", cex.main=2, col.main="brown")
   
