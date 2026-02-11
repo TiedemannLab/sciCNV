@@ -23,25 +23,14 @@ RTAM_normalization <- function(mat,           # Raw scRNA-seq data
                                Optimizing     # True or FALSE options specify whether to run an optional optimization code
 ){
   
-  # argument validations
-  #if( is.na(mat) ){
-  #  stop("Error, the given matrix is not in the accurate format")
-  #}
-  
   if( is.na(method) ){
     method <- c("RTAM2")
     flog.info(sprintf("The considered normalization method is %s",method))
   }
   
-  
   if(! (method %in% c("RTAM1", "RTAM2")) ){
     stop( "The chosen normalization method is not valid.")
   }
-  
-  #if( (Optimizing=="TRUE") & (! is.na(Nt)) 
-  #    ){
-  #  stop("Error, Nt (the number of top-ranked genes) can be specified only if Optimizing = FALSE")
-  #}
   
   if( is.na(Optimizing) ){
     Optimizing = "FALSE"
@@ -50,10 +39,6 @@ RTAM_normalization <- function(mat,           # Raw scRNA-seq data
   if( Optimizing == "FALSE" ){
     Nt <- Min_nGn
   } 
-  
-  #if ( (!is.na(Nt) ) &  ( Nt > Min_nGn ) ){
-  #  stop("Error, Nt is required to be not greater than Min_nGn")
-  #}
   
   general <- as.matrix(mat) #[ , -1])
   rownames(general) <- rownames(mat) #mat[ , 1]
@@ -148,6 +133,7 @@ RTAM_normalization <- function(mat,           # Raw scRNA-seq data
     
     
     ############# Asigning R_mat to ranked matrix of ordered gene expressions in each cell
+    
   } else if ( method == c("RTAM1")){
     
     
@@ -318,8 +304,9 @@ RTAM_normalization <- function(mat,           # Raw scRNA-seq data
   }
   
   ############################################
+  ## Normalizing the data by adding the calculated 
+  ## corrections to each gene expression value
   
-  ## Normalizing the data by adding the calculated corrections to each gene expression value
   LS <- ranked_mat + h_mtrx
   
   Scaled_Normalized_log <- matrix(0, ncol=ncol(ranked_mat), nrow=nrow(ranked_mat))
