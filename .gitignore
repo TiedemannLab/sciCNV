@@ -1,0 +1,13 @@
+doc
+inst/doc
+.Rproj.user
+.Rproj
+.Rhistory
+.DS_Store
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+*.Rproj
+*.txt
+*.csv
