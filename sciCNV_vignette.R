@@ -31,6 +31,7 @@ library(umap)
 source_url("https://raw.githubusercontent.com/obigriffith/biostar-tutorials/master/Heatmaps/heatmap.3.R")
 
 ##
+
 path.code <- "./sciCNV-Analysis/"
 source(file.path(path.code, "Mito_umi_gn.R"))
 source(file.path(path.code, "RTAM_normalization.R"))
@@ -353,24 +354,3 @@ CNV_htmp_gloc( CNV.mat2 = CNV.matrix,
                CNVscore = TotScore,
                break.gloc = break.gloc,
                No.test = No.test )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
