@@ -1,0 +1,31 @@
+Package: sciCNV
+Title: sciCNV
+Version: 0.99.73
+Authors@R: 
+    c(person("Ali","Mahdipour-Shirayeh", 
+    email = "amahdipo@uhnresearch.ca", 
+    role = c("aut","cre"), 
+    comment = c(ORCID = "0000-0002-4201-2937")),
+    person("Rodger","Tiedemann", 
+    email = "Rodger.Tiedemann@uhn.ca", 
+    role = c("aut"), 
+    comment = c(ORCID = "0000-0003-1743-8810")))
+Description: The sciCNV pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs to capture intra-tumor heterogeneity.
+License:  MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+biocViews: CopyNumberVariation, RNASeq, GeneExpression, SingleCell, GenomicVariation, Clustering, CancerEvolution, CancerStudy
+Imports: 
+    stats,
+    graphics,
+    robustbase,
+    dichromat,
+    utils,
+    scales,
+    parallel
+VignetteBuilder: knitr
+Suggests: 
+    rmarkdown,
+    knitr
