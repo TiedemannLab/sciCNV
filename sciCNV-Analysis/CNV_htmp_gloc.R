@@ -7,7 +7,6 @@
 ######                       copyright@AliMahdipourShirayeh                     #######
 #######################################################################################
 
-
 # Please refer to the reference and supplemental materials described in the README for additional details.
 #
 # principal variables:
@@ -73,8 +72,6 @@ CNV_htmp_gloc <- function(CNV.mat2,
   if ( Reduce("|", is.null(break.gloc)) ){
     break.gloc <- c(0, ncol(CNV.mat2))
   }
-  
-  
   
   ##### sorting of cells within clusters, based on tumor CNV scores, from the largest to the smallest (if applicable)
   
@@ -273,7 +270,6 @@ CNV_htmp_gloc <- function(CNV.mat2,
   }
   
   
-  
   ######### Interpolations
   
   for(k in 1:ALL_POINTS){
@@ -306,7 +302,6 @@ CNV_htmp_gloc <- function(CNV.mat2,
     }
     
   }
-  
   
   ###########################################
   require(robustbase)
@@ -394,8 +389,7 @@ CNV_htmp_gloc <- function(CNV.mat2,
       )
 
     } else {
-    
-       
+     
       graphics.off()
       plot.new()
       par(mar=c(5,5,4,2)+1,mgp=c(3,1,0))
