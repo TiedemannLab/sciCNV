@@ -21,6 +21,7 @@ CNV_score <-  function( M_nf ){
   }
   
   #-------
+  
   LL1 <- 0.5
   LL2 <- 1.5
   LL3 <- 2.5
@@ -41,6 +42,7 @@ CNV_score <-  function( M_nf ){
   M_nf.scaled[ , ncol(M_nf)] <- t(as.matrix(M_nf[ , ncol(M_nf)]))
 
   ##################
+    
   Score <- matrix(0, nrow = nrow(M_nf.scaled), ncol = ncol(M_nf.scaled) ) 
   TotScore <- matrix(0, nrow = 1, ncol = (ncol(M_nf.scaled)-1) ) 
   Wr <- ncol(M_nf.scaled)-1
@@ -56,6 +58,7 @@ CNV_score <-  function( M_nf ){
   }
   
   #--------------------------------
+    
   Score[1:nrow(M_nf.scaled), ncol(M_nf.scaled)] <- as.matrix(sign(M_nf.scaled[1:nrow(M_nf.scaled),
                                                    ncol(M_nf.scaled)])*sqrt( abs(M_nf.scaled[,ncol(M_nf.scaled)])))
   TotScore[1, ] <- 100*colSums(Score[, 1:(ncol(M_nf.scaled)-1)])/sum(Score[,ncol(M_nf.scaled)])
