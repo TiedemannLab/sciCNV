@@ -1,17 +1,18 @@
-# README FILE 
+# sciCNV 
 
-## This file provides an overview of the Tiedemann Lab scRNA-seq normalization and inferred CNV pipeline that includes: 
+### This file provides an overview of a novel scRNA-seq normalization and inferred CNV pipeline that includes: 
 - scRNA-seq RTAM data normalization
 - Single-cell Inferred Copy Number Variation (sciCNV)
 - Quality control (QC) 
-- visualization of results
+- Visualization of results
+- Balancing single-cell subpopulations
 
 ### _The pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs. The analysis can be performed on thousands of cells, and thus can capture intra-tumor heterogeneity. It requires only scRNA-seq data._ 
 
 
 ## Reference
 
-Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Rodger E. Tiedemann, _**sciCNV: High-throughput paired profiling of transcriptomes and DNA copy number variations at single cell resolutionn**_, under review.
+Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Rodger E. Tiedemann, _**sciCNV: High-throughput paired profiling of transcriptomes and DNA copy number variations at single cell resolution**_, under review.
 
 
 ## Summary
@@ -467,6 +468,33 @@ A preliminary heatmap of the sciCNV profiles of the test and control cells can b
 genomic rank-order of genes (list of genes) as well as the physical genomic location of the genes). Indeed, CNV-based clustering of cells may be a more effective method for isolating CNV subclones than gene-expression based clustering, as the later must integrate gene expression changes from variable cellular functions such as proliferation. For more information on the comparison of gene expression-based and sciCNV-based cell clustering, please see the reference and supplemental materials. 
 
 
-![Fig9](Fig9.png)
+![Fig9](Fig9.jpg)
 
-![Fig10](Fig10.png)
+![Fig10](Fig10.jpg)
+
+***
+# Balancing single-cell subclones
+
+Transcriptional comparison of diverse subclones of single cells may require certain considerations which their ignorance can tend to misleading outcomes of underlying biological features. Such considerations are associated with several items such as the expression level of genes in cells (number of expressed genes), total transcription of cells (UMIs), morphology of cells in each subclone, cell division states (quiescent cells versus dividing cells) and so on. To address this issue, we offer a new method to prepare subclones (or balancing datasets) priori to undergo analysis of differential gene expressions. This methodology can be performed amongst new compartments of the subclones which are comparable in terms of their size and transcriptional capacities. 
+
+To this end and from genetics point of view, the most challenging part is how to interpret single-cell expression data which in most cases include sparsity associated with the nature of cells and/or artificial imputes due to technical issues in cell sequencing. More precisely, having high frequency of zero expressions can be a result of not capturing signals from cells or because of insensitivity of sequencing instruments to detect transcriptions in some (presumably smaller) cells. Interpreting zero transcripts is intense since each can be considered as either not expressing gene or lack of signal recording. Therefore, changing zero expressions to potential non-zero transcripts seems to be resilient and in some cases can alter the real biological picture of rare cells of interest. Moreover, customary approaches introduced for bulk RNA-seqs cannot necessarily be used for single cells due to lack of expressions required for analytical comparisons of clones. 
+
+There exist several methods, some employed to eliminate outlier cells to provide more consistent subpopulations, while other methods are mainly using machine/deep-learning techniques which attempt to correct datasets by inserting missing expressions and/or excluding redundant transcriptions. These techniques are performed to add/delete data based on genetic similarities of cells within each cluster (determined by unsupervised clustering of the existing gene expressions). Such approaches, as we previously mentioned, may modify a part of data but can also add extra artifacts and presumably disappear tiny cell-compartments of potential interest. 
+
+
+All the required steps for balancing candidate subclones are reflected in the `Balancing_vignette.R` file in the `R` folder along with its helper functions. In below figure, balancing steps are shown as a method to reduce the dissimilarities between subclones/subpopulations. 
+
+![Fig11](Fig11.jpg)
+
+Panels (a)-(f) represents the balancing procedure that we suggest to modify the selected subpopulations of interest for sake of comparison, a novel mechanism to modify subpopulations based on their number of UMI and/or number of expressed genes (nUMI and nGene resp.). (a)-(b) represents original nGenes w.r.t the original nUMIs in two subclones of a patient sample. Apply our balancing method, we first balance the subpopulations based on nUMIs, to provide new compartments of cells per subpopulations that have similar probability density functions for nUMIs. In case needed one can continue for further modifications w.r.t. nGenes as well, shown on (c). Subfigure (d) represents the density distribution of differential average expressions per gene of sample 1 and sample 2, for the original datasets, datasets after balancing w.r.t. nUMIs, and nUMIs+nGenes. Subfigures (e) and (f) show the volcano plots of pre- and post-balancing.
+
+The following figure represent how distribition of UMIs changes from pre-to-post balancing in a single-cell subpopulation:
+
+![Fig12](Fig12.png)
+
+*Note: This methodology is not only designed for single-cells and could be used for any sparse data in which comparing the original subclones may not reflect the underneath pattern of data in which the real face of data could be observed only after some modifications to the data wrt. total number of reads, UMIs, total number of exoressed genes, and so on.*
+
+
+
+
+
