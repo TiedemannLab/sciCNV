@@ -115,8 +115,6 @@ Scaling_CNV <-  function(V7Alt,
   ## this function returnes the scaled CNV-matrix
   return( Final_Mat )
   
-  
-  
 }
 
 
