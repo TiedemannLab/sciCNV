@@ -482,7 +482,7 @@ To this end and from genetics point of view, the most challenging part is how to
 There exist several methods, some employed to eliminate outlier cells to provide more consistent subpopulations, while other methods are mainly using machine/deep-learning techniques which attempt to correct datasets by inserting missing expressions and/or excluding redundant transcriptions. These techniques are performed to add/delete data based on genetic similarities of cells within each cluster (determined by unsupervised clustering of the existing gene expressions). Such approaches, as we previously mentioned, may modify a part of data but can also add extra artifacts and presumably disappear tiny cell-compartments of potential interest. 
 
 
-All the required steps for balancing candidate subclones are reflected in the `Balancing_vignette.R` file in the `R` folder along with its helper functions. In below figure, balancing steps are shown as a method to reduce the dissimilarities between subclones/subpopulations. 
+All the required steps for balancing candidate subclones are reflected in the `Balancing_vignette.R` file in the `sciCNV-Analysis` folder along with its helper functions. In below figure, balancing steps are shown as a method to reduce the dissimilarities between subclones/subpopulations. 
 
 ![Fig11](Fig11.jpg)
 
