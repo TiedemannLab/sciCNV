@@ -7,17 +7,16 @@
 - Visualization of results
 - Balancing single-cell subpopulations
 
-### _The pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs. The analysis can be performed on thousands of cells, and thus can capture intra-tumor heterogeneity. It requires only scRNA-seq data._ 
+### _The pipeline enables profiling of RNA and DNA copy number in the same cells, and thus permits direct examination of the influence of genomic CNV on gene expression and cellular programs. The analysis can be performed on thousands of cells, and thus can capture intra-clonal heterogeneity. It requires only scRNA-seq data._ 
 
 
 ## Reference
 
-Ali Madipour-Shirayeh, Natalie Erdmann, Chungyee Leung-Hagesteijn, Rodger E. Tiedemann, _**sciCNV: High-throughput paired profiling of transcriptomes and DNA copy number variations at single cell resolution**_, under review.
-
+Ali Mahdipour-Shirayeh, Ines Tagoug, Natalie Erdmann, Chungyee Leung-Hagesteijn, Rodger E Tiedemann. sciCNV: High-throughput paired profiling of transcriptomes and DNA copy number variations at single cell resolution. Brief Bioinform. 2022;23(1):bbab413. doi: 10.1093/bib/bbab413. PMID: 38205967
 
 ## Summary
 
-Chromosome copy number variations (CNVs) are a near-universal feature of cancer however their specific effects on cellular function are poorly understood. Single-cell RNA sequencing (scRNA-seq) can reveal cellular gene expression however cannot directly link this to CNVs. Here we report scRNA-seq normalization methods (RTAM1 and RTAM2) that improve gene expression alignment between cells, increasing the sensitivity of scRNA-seq for CNV detection. We also report sciCNV, a tool for inferring CNVs from scRNA-seq. Together, these tools enable dual profiling of DNA and RNA in single cells. We apply these techniques to multiple myeloma and examine the cellular effects of pervasive cancer CNVs +8q and +1q. As expected, cells with +8q23-24 upregulate MYC-target genes, mRNA processing and protein synthesis; but also upregulate DEPTOR and have smaller transcriptomes. Cells with +1q21-44 reconfigure translation and unexpectedly suppress unfolded protein stress whilst increasing proliferation, oxidative phosphorylation and MCL1. Using scRNA-seq we reconstruct the effects of cancer CNVs on cellular programs.
+Chromosome copy number variations (CNVs) are a near-universal feature of cancer however their specific effects on cellular function are poorly understood. Single-cell RNA sequencing (scRNA-seq) can reveal cellular gene expression however cannot directly link this to CNVs. Here we report scRNA-seq normalization methods (RTAM1 and RTAM2) that improve gene expression alignment between cells, increasing the sensitivity of scRNA-seq for CNV detection. We also report sciCNV, a tool for inferring CNVs from scRNA-seq. Together, these tools enable dual profiling of DNA and RNA in single cells. 
 
 --------------------
 
